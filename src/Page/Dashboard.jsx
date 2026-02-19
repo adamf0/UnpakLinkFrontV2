@@ -16,13 +16,13 @@ import {
 } from "recharts";
 
 import {
-  getVisitorIP,
   getBrowser,
-  randomColor,
   getBrowserIcon,
 } from "@/lib/utils";
 import GeoCountryMap from "@/Components/GeoCountryMap";
 import { useSidebar } from "@/Providers/SidebarProvider";
+
+const BASEAPI = import.meta.env.VITE_BASEAPI;
 
 export default function Dashboard() {
   const { toggleSidebar } = useSidebar();
@@ -89,7 +89,7 @@ export default function Dashboard() {
   async function loadData() {
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:3000/clicks?mode=sse`, {
+      const res = await fetch(`${BASEAPI}/clicks?mode=sse`, {
         method: "GET",
         headers: {
           Accept: "text/event-stream",

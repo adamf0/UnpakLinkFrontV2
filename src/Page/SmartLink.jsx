@@ -5,6 +5,7 @@ import { useToast } from "@/Providers/ToastProvider";
 import { useAuth } from "@/Providers/AuthProvider";
 import { getInformation } from "@/lib/utils";
 import countries from "i18n-iso-countries";
+import Logo from "@/assets/logo.svg";
 import id from "i18n-iso-countries/langs/id.json";
 countries.registerLocale(id);
 
@@ -27,6 +28,8 @@ function LoadingDots() {
     </span>
   );
 }
+
+const BASEAPI = import.meta.env.VITE_BASEAPI;
 
 function LoadingDataDots() {
   return (
@@ -77,16 +80,16 @@ export default function SmartLink() {
         console.log(info);
 
         const res = await fetch(
-          `http://localhost:3000/link/short/${shorturl}?`,
+          `${BASEAPI}/link/short/${shorturl}?`,
           {
             method: "GET",
             headers: {
-                Authorization: `Bearer ${getValidToken()}`,
-                "Content-Type": "application/json",
-                "X-API-KEY":"putiklink",
-                "X-IP":info.ip,
-                "X-ISO":info.country,
-                "X-COUNTRY":countries.getName(info.country, "id"),
+              Authorization: `Bearer ${getValidToken()}`,
+              "Content-Type": "application/json",
+              "X-API-KEY": "putiklink",
+              "X-IP": info.ip,
+              "X-ISO": info.country,
+              "X-COUNTRY": countries.getName(info.country, "id"),
             },
           },
         );
@@ -235,10 +238,12 @@ export default function SmartLink() {
 
             <div
               className={`absolute inset-3 rounded-full shadow-xl
-              bg-[url('https://unpak.link/assets/logo.svg')]
               bg-contain bg-center bg-no-repeat
               transition duration-500
             `}
+              style={{
+                backgroundImage: `url(${Logo})`,
+              }}
             ></div>
           </div>
 
@@ -273,7 +278,7 @@ export default function SmartLink() {
               <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-48 h-8 bg-black/40 rounded-full blur-md"></div>
               <div className="relative w-48 h-48 flex items-center justify-center">
                 <img
-                  src="https://unpak.link/assets/logo.svg"
+                  src={Logo}
                   alt="Logo"
                   className="w-48 h-48 object-contain"
                 />
@@ -308,10 +313,7 @@ export default function SmartLink() {
       <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-sm p-8">
           <div className="flex items-center gap-2 mb-10">
-            <img
-              src="https://unpak.link/assets/logo.svg"
-              className="w-12 h-12"
-            />
+            <img src={Logo} className="w-12 h-12" />
             <span className="text-xl font-semibold text-gray-800">
               unpak.link
             </span>
@@ -379,11 +381,13 @@ export default function SmartLink() {
 
           <div
             className={`absolute inset-3 rounded-full shadow-xl
-              bg-[url('https://unpak.link/assets/logo.svg')]
               bg-contain bg-center bg-no-repeat
               transition duration-500
               ${isExpired ? "grayscale opacity-60 scale-95" : ""}
             `}
+            style={{
+              backgroundImage: `url(${Logo})`,
+            }}
           ></div>
         </div>
 

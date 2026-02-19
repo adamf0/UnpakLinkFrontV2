@@ -42,6 +42,8 @@ const formatDateTime = (value) => {
   return formatted.length === 16 ? formatted + ":00" : formatted;
 };
 
+const BASEAPI = import.meta.env.VITE_BASEAPI;
+
 export default function LinkPage() {
   const { toggleSidebar } = useSidebar();
   const controller = new AbortController();
@@ -50,7 +52,7 @@ export default function LinkPage() {
   const [datas, setDatas] = useState([]);
   const [filterOpen, setFilterOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState("active");
-  const [now, setNow] = useState(Date.now());
+  const [_, setNow] = useState(Date.now());
   const [searchTerm, setSearchTerm] = useState("");
 
   const filterRef = useRef(null);
@@ -81,7 +83,7 @@ export default function LinkPage() {
 
     try {
       const res = await fetch(
-        `http://localhost:3000/links?mode=sse&filters=status:eq:${activeFilter}`,
+        `${BASEAPI}/links?mode=sse&filters=status:eq:${activeFilter}`,
         {
           method: "GET",
           headers: {
@@ -401,7 +403,7 @@ function ShortLinkForm({ renderAction = () => {} }) {
         dataForm.append("end", formatDateTime(data.end));
       }
 
-      const res = await axios.post(`http://localhost:3000/link`, dataForm, {
+      const res = await axios.post(`${BASEAPI}/link`, dataForm, {
         validateStatus: () => true,
         headers: {
           Authorization: `Bearer ${getValidToken()}`,
@@ -726,10 +728,11 @@ function LinkCard({
 
   const { addToast } = useToast();
   const qrRef = useRef(null);
+  const BASEURL = import.meta.env.VITE_BASEURL;
 
   const copyToClipboard = async (slug) => {
     try {
-      const url = `https://unpak.link/${slug}`;
+      const url = `${BASEURL}/${slug}`;
       await navigator.clipboard.writeText(url);
 
       addToast("success", "Success copy link");
@@ -774,7 +777,7 @@ function LinkCard({
       dataForm.append("shortUrl", data.shorturl);
 
       const res = await axios.put(
-        `http://localhost:3000/link/${uuid}`,
+        `${BASEAPI}/link/${uuid}`,
         dataForm,
         {
           validateStatus: () => true,
@@ -841,7 +844,7 @@ function LinkCard({
       dataForm.append("password", data.password);
 
       const res = await axios.put(
-        `http://localhost:3000/link/password/${uuid}`,
+        `${BASEAPI}/link/password/${uuid}`,
         dataForm,
         {
           validateStatus: () => true,
@@ -899,7 +902,7 @@ function LinkCard({
 
     try {
       const res = await axios.put(
-        `http://localhost:3000/link/rollback-password/${uuid}`,
+        `${BASEAPI}/link/rollback-password/${uuid}`,
         {},
         {
           validateStatus: () => true,
@@ -957,7 +960,7 @@ function LinkCard({
 
     try {
       const res = await axios.put(
-        `http://localhost:3000/link/rollback-time/${uuid}`,
+        `${BASEAPI}/link/rollback-time/${uuid}`,
         {},
         {
           validateStatus: () => true,
@@ -1019,7 +1022,7 @@ function LinkCard({
       dataForm.append("end", formatDateTime(data.end));
 
       const res = await axios.put(
-        `http://localhost:3000/link/time/${uuid}`,
+        `${BASEAPI}/link/time/${uuid}`,
         dataForm,
         {
           validateStatus: () => true,
@@ -1076,7 +1079,7 @@ function LinkCard({
   //   setLoading(true);
 
   //   try {
-  //     const res = await axios.delete(`http://localhost:3000/link/${uuid}`, {
+  //     const res = await axios.delete(`${BASEAPI}/link/${uuid}`, {
   //       validateStatus: () => true,
   //       headers: {
   //         Authorization: `Bearer ${getValidToken()}`,
@@ -1131,7 +1134,7 @@ function LinkCard({
 
     try {
       const res = await axios.put(
-        `http://localhost:3000/link/${uuid}/delete`,
+        `${BASEAPI}/link/${uuid}/delete`,
         {},
         {
           validateStatus: () => true,
@@ -1189,7 +1192,7 @@ function LinkCard({
 
     try {
       const res = await axios.put(
-        `http://localhost:3000/link/${uuid}/archive`,
+        `${BASEAPI}/link/${uuid}/archive`,
         {},
         {
           validateStatus: () => true,
@@ -1247,7 +1250,7 @@ function LinkCard({
 
     try {
       const res = await axios.put(
-        `http://localhost:3000/link/${uuid}/active`,
+        `${BASEAPI}/link/${uuid}/active`,
         {},
         {
           validateStatus: () => true,
@@ -1332,7 +1335,7 @@ flex flex-col sm:flex-row gap-5 hover:shadow-md transition"
   bg-gray-100 rounded-lg flex items-center justify-center"
         >
           <QR
-            value={`https://unpak.link/${shortUrl}`}
+            value={`${BASEURL}/${shortUrl}`}
             level="H"
             includeMargin
             imageSettings={{
@@ -1694,7 +1697,7 @@ flex flex-col sm:flex-row gap-5 hover:shadow-md transition"
             <div className="w-48 h-48 mx-auto bg-gray-200 flex items-center justify-center rounded-xl">
               <QR
                 ref={qrRef}
-                value={`https://unpak.link/${shortUrl}`}
+                value={`${BASEURL}/${shortUrl}`}
                 size={220}
                 level="H"
                 includeMargin

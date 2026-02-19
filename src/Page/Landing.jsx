@@ -39,12 +39,12 @@ export default function Landing() {
                 </div>
 
                 <div>
-                  <a
-                    href="https://unpak.link/login"
+                  <Link
+                    to="/login"
                     className="inline-block bg-cyan-400 text-[#49318f] px-8 py-3 rounded-full font-semibold hover:bg-cyan-500 transition-all duration-300 shadow-md"
                   >
                     Login
-                  </a>
+                  </Link>
                 </div>
               </div>
 

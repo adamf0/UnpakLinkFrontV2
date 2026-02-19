@@ -9,6 +9,7 @@ import SmartLink from "./Page/SmartLink";
 import { SidebarProvider } from "./Providers/SidebarProvider";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import Landing from "./Page/Landing";
+import NotFoundRoute from "./Page/NotFoundRoute";
 
 export default function App() {
   return (
@@ -26,6 +27,8 @@ export default function App() {
                   <Route path="/link" element={<LinkPage />} />
                 </Route>
               </Route>
+
+              <Route path="*" element={<NotFoundRoute />} />
             </Routes>
           </Router>
         </ToastProvider>

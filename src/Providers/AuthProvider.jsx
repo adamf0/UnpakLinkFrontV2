@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext(null);
+const BASEAPI = import.meta.env.VITE_BASEAPI;
 
 const decodeJWT = (jwt) => {
   try {
@@ -79,7 +80,7 @@ export function AuthProvider({ children }) {
       const validToken = getValidToken();
       if (!validToken) throw new Error("Session expired");
 
-      const res = await axios.get("http://localhost:3000/whoami", {
+      const res = await axios.get(`${BASEAPI}/whoami`, {
         validateStatus: () => true,
         headers: {
           Authorization: `Bearer ${validToken}`,

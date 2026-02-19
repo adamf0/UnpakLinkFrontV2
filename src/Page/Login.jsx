@@ -4,6 +4,9 @@ import axios from "axios";
 import { useToast } from "@/Providers/ToastProvider";
 import { FaGoogle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import Logo from "@/assets/logo.svg"
+
+const BASEAPI = import.meta.env.VITE_BASEAPI;
 
 export default function Login() {
   const { addToast } = useToast();
@@ -26,7 +29,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:3000/login", dataForm, {
+      const res = await axios.post(`${BASEAPI}/login`, dataForm, {
         validateStatus: () => true,
       });
       const body = res.data;
@@ -39,7 +42,7 @@ export default function Login() {
         );
         // setErrorMessage(body.error);
       } else {
-        const res = await axios.get("http://localhost:3000/whoami", {
+        const res = await axios.get(`${BASEAPI}/whoami`, {
           validateStatus: () => true,
           headers: {
             Authorization: `Bearer ${body.access_token}`,
@@ -103,7 +106,7 @@ export default function Login() {
         <div className="w-full md:w-1/2 p-12 flex flex-col justify-center items-center relative">
           {/* Logo */}
           <div className="w-20 h-20 rounded-full flex items-center justify-center mb-6">
-            <img src="https://unpak.link/assets/logo.svg" />
+            <img src={Logo} />
           </div>
 
           <h1 className="text-3xl font-bold mb-2">Masuk</h1>
