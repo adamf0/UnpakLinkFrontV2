@@ -1411,7 +1411,7 @@ flex flex-col sm:flex-row gap-5 hover:shadow-md transition"
               </h3>
 
               <p className="text-red-600 font-bold text-lg sm:text-xl break-all">
-                unpak.link/{shortUrl}
+                unpak.link/#/{shortUrl}
               </p>
 
               <p className="text-gray-400 text-sm truncate">{originalUrl}</p>
