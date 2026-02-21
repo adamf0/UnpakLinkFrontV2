@@ -732,7 +732,7 @@ function LinkCard({
 
   const copyToClipboard = async (slug) => {
     try {
-      const url = `${BASEURL}/#/${slug}`;
+      const url = `${BASEURL}/${slug}`;
       await navigator.clipboard.writeText(url);
 
       addToast("success", "Success copy link");
@@ -1388,7 +1388,7 @@ flex flex-col sm:flex-row gap-5 hover:shadow-md transition"
   bg-gray-100 rounded-lg flex items-center justify-center"
         >
           <QR
-            value={`${BASEURL}/#/${shortUrl}`}
+            value={`${BASEURL}/${shortUrl}`}
             level="H"
             includeMargin
             imageSettings={{
@@ -1411,7 +1411,7 @@ flex flex-col sm:flex-row gap-5 hover:shadow-md transition"
               </h3>
 
               <p className="text-red-600 font-bold text-lg sm:text-xl break-all">
-                unpak.link/#/{shortUrl}
+                unpak.link//{shortUrl}
               </p>
 
               <p className="text-gray-400 text-sm truncate">{originalUrl}</p>
@@ -1710,7 +1710,7 @@ flex flex-col sm:flex-row gap-5 hover:shadow-md transition"
             <div className="w-48 h-48 mx-auto bg-gray-200 flex items-center justify-center rounded-xl">
               <QR
                 ref={qrRef}
-                value={`${BASEURL}/#/${shortUrl}`}
+                value={`${BASEURL}/${shortUrl}`}
                 size={220}
                 level="H"
                 includeMargin
@@ -1726,7 +1726,7 @@ flex flex-col sm:flex-row gap-5 hover:shadow-md transition"
             </div>
 
             <p className="text-sm text-gray-500">
-              {BASEURL}/#/{shortUrl}
+              {BASEURL}/{shortUrl}
             </p>
 
             <button

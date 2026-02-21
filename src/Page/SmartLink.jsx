@@ -74,7 +74,7 @@ export default function SmartLink() {
   async function loadData() {
     setLoading(true);
 
-    setTimeout(async () => {
+    // setTimeout(async () => {
       try {
         const info = await getInformation();
         console.log(info);
@@ -149,7 +149,7 @@ export default function SmartLink() {
       } finally {
         setLoading(false);
       }
-    }, 2000);
+    // }, 2000);
   }
 
   useEffect(() => {
@@ -209,9 +209,9 @@ export default function SmartLink() {
     if (!long) return;
 
     if (mode === "default" || (mode === "count" && status === "active")) {
-      const timer = setTimeout(() => {
+      // const timer = setTimeout(() => {
         window.location.href = long;
-      }, 5000);
+      // }, 5000);
 
       return () => clearTimeout(timer);
     }
