@@ -776,16 +776,12 @@ function LinkCard({
       const dataForm = new FormData();
       dataForm.append("shortUrl", data.shorturl);
 
-      const res = await axios.put(
-        `${BASEAPI}/link/${uuid}`,
-        dataForm,
-        {
-          validateStatus: () => true,
-          headers: {
-            Authorization: `Bearer ${getValidToken()}`,
-          },
+      const res = await axios.put(`${BASEAPI}/link/${uuid}`, dataForm, {
+        validateStatus: () => true,
+        headers: {
+          Authorization: `Bearer ${getValidToken()}`,
         },
-      );
+      });
       const body = res.data;
       console.log(body);
 
@@ -1021,16 +1017,12 @@ function LinkCard({
       dataForm.append("start", formatDateTime(data.start));
       dataForm.append("end", formatDateTime(data.end));
 
-      const res = await axios.put(
-        `${BASEAPI}/link/time/${uuid}`,
-        dataForm,
-        {
-          validateStatus: () => true,
-          headers: {
-            Authorization: `Bearer ${getValidToken()}`,
-          },
+      const res = await axios.put(`${BASEAPI}/link/time/${uuid}`, dataForm, {
+        validateStatus: () => true,
+        headers: {
+          Authorization: `Bearer ${getValidToken()}`,
         },
-      );
+      });
       const body = res.data;
       console.log(body);
 
@@ -1075,59 +1067,59 @@ function LinkCard({
     }
   };
 
-  // const removeHandler = async () => {
-  //   setLoading(true);
+  const removeHandler = async () => {
+    setLoading(true);
 
-  //   try {
-  //     const res = await axios.delete(`${BASEAPI}/link/${uuid}`, {
-  //       validateStatus: () => true,
-  //       headers: {
-  //         Authorization: `Bearer ${getValidToken()}`,
-  //       },
-  //     });
-  //     const body = res.data;
-  //     console.log(body);
+    try {
+      const res = await axios.delete(`${BASEAPI}/link/${uuid}`, {
+        validateStatus: () => true,
+        headers: {
+          Authorization: `Bearer ${getValidToken()}`,
+        },
+      });
+      const body = res.data;
+      console.log(body);
 
-  //     if (body.error || res.status >= 400) {
-  //       // 🔥 Handle validation error khusus
-  //       if (
-  //         body?.code === "LinkDelete.Validation" &&
-  //         typeof body.message === "object"
-  //       ) {
-  //         const messages = Object.values(body.message).flat().join("\n");
+      if (body.error || res.status >= 400) {
+        // 🔥 Handle validation error khusus
+        if (
+          body?.code === "LinkDelete.Validation" &&
+          typeof body.message === "object"
+        ) {
+          const messages = Object.values(body.message).flat().join("\n");
 
-  //         addToast("error", messages);
-  //         return;
-  //       }
+          addToast("error", messages);
+          return;
+        }
 
-  //       // 🔥 Kalau string
-  //       if (typeof body === "string") {
-  //         addToast("error", body);
-  //         return;
-  //       }
+        // 🔥 Kalau string
+        if (typeof body === "string") {
+          addToast("error", body);
+          return;
+        }
 
-  //       // 🔥 Generic object
-  //       addToast("error", body?.message || "Terjadi kesalahan pada server");
-  //       return;
-  //     } else {
-  //       addToast("success", "berhasil hapus waktu pada link");
-  //       setProtectedSet(true);
-  //       reset();
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //     const data = err.response.data;
+        // 🔥 Generic object
+        addToast("error", body?.message || "Terjadi kesalahan pada server");
+        return;
+      } else {
+        addToast("success", "berhasil hapus waktu pada link");
+        setProtectedSet(true);
+        reset();
+      }
+    } catch (err) {
+      console.error(err);
+      const data = err.response.data;
 
-  //     if (typeof data === "object" && data !== null) {
-  //       addToast("error", data.message);
-  //     } else {
-  //       addToast("error", "ada masalah pada aplikasi");
-  //     }
-  //   } finally {
-  //     setLoading(false);
-  //     renderAction();
-  //   }
-  // };
+      if (typeof data === "object" && data !== null) {
+        addToast("error", data.message);
+      } else {
+        addToast("error", "ada masalah pada aplikasi");
+      }
+    } finally {
+      setLoading(false);
+      renderAction();
+    }
+  };
 
   const deleteHandler = async () => {
     setLoading(true);
@@ -1322,6 +1314,67 @@ function LinkCard({
     }
   };
 
+  function renderButton(state) {
+    if (state === "active") {
+      return (
+        <>
+          <IconButton
+            icon={<Copy size={16} />}
+            tooltip="Copy link"
+            onClick={() => copyToClipboard(shortUrl)}
+          />
+
+          <IconButton
+            icon={<QrCode size={16} />}
+            tooltip="Show QR"
+            onClick={() => setShowQR(true)}
+          />
+
+          <IconButton
+            icon={<LucidePencil size={16} />}
+            tooltip="Edit link"
+            onClick={() => setShowEdit(true)}
+          />
+
+          <IconButton
+            icon={<Trash size={16} />}
+            tooltip="Delete link"
+            onClick={() => deleteHandler()}
+          />
+
+          <IconButton
+            icon={<Archive size={16} />}
+            tooltip="Archive link"
+            onClick={() => archiveHandler()}
+          />
+        </>
+      );
+    } else if (state == "delete") {
+      return (
+        <>
+          <IconButton
+            icon={<FiRotateCcw size={16} />}
+            tooltip="Activate link"
+            onClick={() => activeHandler()}
+          />
+          <IconButton
+            icon={<Trash size={16} />}
+            tooltip="Delete link"
+            onClick={() => removeHandler()}
+          />
+        </>
+      );
+    } else {
+      return (
+        <IconButton
+          icon={<FiRotateCcw size={16} />}
+          tooltip="Activate link"
+          onClick={() => activeHandler()}
+        />
+      );
+    }
+  }
+
   return (
     <>
       {/* CARD */}
@@ -1363,47 +1416,7 @@ flex flex-col sm:flex-row gap-5 hover:shadow-md transition"
 
               <p className="text-gray-400 text-sm truncate">{originalUrl}</p>
 
-              <div className="flex wrap gap-3 my-3">
-                {state === "active" ? (
-                  <>
-                    <IconButton
-                      icon={<Copy size={16} />}
-                      tooltip="Copy link"
-                      onClick={() => copyToClipboard(shortUrl)}
-                    />
-
-                    <IconButton
-                      icon={<QrCode size={16} />}
-                      tooltip="Show QR"
-                      onClick={() => setShowQR(true)}
-                    />
-
-                    <IconButton
-                      icon={<LucidePencil size={16} />}
-                      tooltip="Edit link"
-                      onClick={() => setShowEdit(true)}
-                    />
-
-                    <IconButton
-                      icon={<Trash size={16} />}
-                      tooltip="Delete link"
-                      onClick={() => deleteHandler()}
-                    />
-
-                    <IconButton
-                      icon={<Archive size={16} />}
-                      tooltip="Archive link"
-                      onClick={() => archiveHandler()}
-                    />
-                  </>
-                ) : (
-                  <IconButton
-                    icon={<FiRotateCcw size={16} />}
-                    tooltip="Activate link"
-                    onClick={() => activeHandler()}
-                  />
-                )}
-              </div>
+              <div className="flex wrap gap-3 my-3">{renderButton(state)}</div>
             </div>
           </div>
 
