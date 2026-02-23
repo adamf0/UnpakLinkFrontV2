@@ -4,6 +4,10 @@ import Logo from "@/assets/logo.svg"
 import Img1 from "@/assets/img-1.svg"
 import Img2 from "@/assets/img-2.svg"
 import Img3 from "@/assets/img-3.svg"
+import instagram from "@/assets/instagram.svg"
+import twitter from "@/assets/twitter.svg"
+import facebook from "@/assets/facebook.svg"
+import tiktok from "@/assets/tiktok.svg"
 
 export default function Landing() {
   return (
@@ -65,10 +69,10 @@ export default function Landing() {
                   </div>
 
                   <div className="flex gap-5">
-                    <SocialIcon src="instagram.svg" />
-                    <SocialIcon src="twitter.svg" />
-                    <SocialIcon src="facebook.svg" />
-                    <SocialIcon src="tiktok.svg" />
+                    <SocialIcon src={instagram} />
+                    <SocialIcon src={twitter} />
+                    <SocialIcon src={facebook} />
+                    <SocialIcon src={tiktok} />
                   </div>
                 </div>
               </div>
@@ -160,10 +164,10 @@ export default function Landing() {
             </div>
 
             <div className="flex gap-5">
-              <Link to="https://www.instagram.com/official_unpak/"><SocialIcon src="instagram.svg" /></Link>
-              <Link to="https://x.com/official_unpak"><SocialIcon src="twitter.svg" /></Link>
-              <Link to="https://www.facebook.com/unpak/"><SocialIcon src="facebook.svg" /></Link>
-              <Link to="https://www.tiktok.com/discover/universitas-pakuan"><SocialIcon src="tiktok.svg" /></Link>
+              <Link to="https://www.instagram.com/official_unpak/"><SocialIcon src={instagram} /></Link>
+              <Link to="https://x.com/official_unpak"><SocialIcon src={twitter} /></Link>
+              <Link to="https://www.facebook.com/unpak/"><SocialIcon src={facebook} /></Link>
+              <Link to="https://www.tiktok.com/discover/universitas-pakuan"><SocialIcon src={tiktok} /></Link>
             </div>
           </div>
 
@@ -177,7 +181,7 @@ export default function Landing() {
 function SocialIcon({ src }) {
   return (
     <img
-      src={`https://unpak.link/assets/${src}`}
+      src={src}
       alt={src}
       className="w-4 h-4 hover:scale-110 transition-transform duration-300 cursor-pointer"
     />
