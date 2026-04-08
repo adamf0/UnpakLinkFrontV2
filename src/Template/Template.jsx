@@ -55,7 +55,7 @@ export default function Template() {
           >
             <div className="flex items-center gap-3">
               <div className="flex justify-center items-center bg-blue-600 rounded-lg text-white w-10 h-10 font-semibold text-lg">
-                AF
+                {getNameInfo()?.[0]?.toUpperCase() ?? ""}
               </div>
               <div className="flex-1">
                 <h2 className="font-semibold truncate text-sm">
