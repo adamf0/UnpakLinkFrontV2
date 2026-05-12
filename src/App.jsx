@@ -10,6 +10,7 @@ import { SidebarProvider } from "./Providers/SidebarProvider";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import Landing from "./Page/Landing";
 import NotFoundRoute from "./Page/NotFoundRoute";
+import Callback from "./Page/Callback";
 
 export default function App() {
   return (
@@ -19,7 +20,8 @@ export default function App() {
           <Router>
             <Routes>
               <Route path="/" element={<Landing />} />
-              <Route path="/login" element={<Login />} />
+              {/* <Route path="/login" element={<Login />} /> */}
+              <Route path="/callback" element={<Callback />} />
               <Route path="/:shorturl" element={<SmartLink />} />
               <Route element={<ProtectedRoute />}>
                 <Route element={<Template />}>

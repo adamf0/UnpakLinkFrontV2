@@ -1,12 +1,17 @@
 import { useAuth } from "@/Providers/AuthProvider";
-import React from "react";
-import { Navigate, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
 export default function ProtectedRoute() {
-  const { expired } = useAuth();
+  const { isSessionExpired } = useAuth();
 
-  if (expired || !sessionStorage.getItem("token")) {
-    return <Navigate to="/login" replace />;
+  if (
+    isSessionExpired() ||
+    !sessionStorage.getItem("token")
+  ) {
+    window.location.href =
+      "https://portal.unpak.ac.id/login";
+
+    return null;
   }
 
   return <Outlet />;

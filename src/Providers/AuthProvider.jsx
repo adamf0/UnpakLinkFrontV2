@@ -35,18 +35,18 @@ export function AuthProvider({ children }) {
     return payload.exp <= nowInSeconds();
   };
 
-  const isRefreshExpired = () => {
-    const refresh = sessionStorage.getItem("refresh");
-    if (!refresh) return true;
+  // const isRefreshExpired = () => {
+  //   const refresh = sessionStorage.getItem("refresh");
+  //   if (!refresh) return true;
 
-    const payload = decodeJWT(refresh);
-    if (!payload?.exp) return true;
+  //   const payload = decodeJWT(refresh);
+  //   if (!payload?.exp) return true;
 
-    return payload.exp <= nowInSeconds();
-  };
+  //   return payload.exp <= nowInSeconds();
+  // };
 
   const isSessionExpired = () => {
-    return isTokenExpired() && isRefreshExpired();
+    return isTokenExpired();
   };
 
   /* ======================
@@ -55,7 +55,7 @@ export function AuthProvider({ children }) {
 
   const getValidToken = () => {
     if (!isTokenExpired()) return sessionStorage.getItem("token");
-    if (!isRefreshExpired()) return sessionStorage.getItem("refresh");
+    // if (!isRefreshExpired()) return sessionStorage.getItem("refresh");
     return null;
   };
 
@@ -112,7 +112,7 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     sessionStorage.removeItem("token");
-    sessionStorage.removeItem("refresh");
+    // sessionStorage.removeItem("refresh");
     sessionStorage.removeItem("info");
     setUser(null);
     setToken(null);
