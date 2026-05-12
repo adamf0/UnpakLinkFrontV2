@@ -9,7 +9,7 @@ export default function ProtectedRoute() {
     !sessionStorage.getItem("token")
   ) {
     window.location.href =
-      "https://portal.unpak.ac.id/login";
+      "https://portal.unpak.ac.id/dashboard";
 
     return null;
   }
