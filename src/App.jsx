@@ -20,7 +20,7 @@ export default function App() {
           <Router>
             <Routes>
               <Route path="/" element={<Landing />} />
-              {/* <Route path="/login" element={<Login />} /> */}
+              <Route path="/login" element={<Login />} />
               <Route path="/callback" element={<Callback />} />
               <Route path="/:shorturl" element={<SmartLink />} />
               <Route element={<ProtectedRoute />}>
