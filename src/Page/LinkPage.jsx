@@ -23,6 +23,8 @@ import {
   Menu,
 } from "lucide-react";
 
+import logo_unpak from "@/assets/logo.png"
+
 import { QRCodeCanvas as QR } from "qrcode.react";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/Providers/ToastProvider";
@@ -1393,7 +1395,7 @@ flex flex-col sm:flex-row gap-5 hover:shadow-md transition"
             level="H"
             includeMargin
             imageSettings={{
-              src: "/logo.png",
+              src: {logo_unpak},
               height: 50,
               width: 50,
               excavate: true,
@@ -1716,7 +1718,7 @@ flex flex-col sm:flex-row gap-5 hover:shadow-md transition"
                 level="H"
                 includeMargin
                 imageSettings={{
-                  src: "/logo.png",
+                  src: {logo_unpak},
                   x: undefined,
                   y: undefined,
                   height: 50,
