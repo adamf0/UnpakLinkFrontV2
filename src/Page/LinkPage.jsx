@@ -1395,7 +1395,7 @@ flex flex-col sm:flex-row gap-5 hover:shadow-md transition"
             level="H"
             includeMargin
             imageSettings={{
-              src: {logo_unpak},
+              src: logo_unpak,
               height: 50,
               width: 50,
               excavate: true,
@@ -1718,7 +1718,7 @@ flex flex-col sm:flex-row gap-5 hover:shadow-md transition"
                 level="H"
                 includeMargin
                 imageSettings={{
-                  src: {logo_unpak},
+                  src: logo_unpak,
                   x: undefined,
                   y: undefined,
                   height: 50,
