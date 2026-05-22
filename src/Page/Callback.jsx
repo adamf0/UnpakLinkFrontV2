@@ -60,8 +60,8 @@ export default function Callback() {
       /* =========================
        * SAVE SESSION
        * ========================= */
-      sessionStorage.setItem("token", idToken);
-      sessionStorage.setItem("info", JSON.stringify(info));
+      localStorage.setItem("token", idToken);
+      localStorage.setItem("info", JSON.stringify(info));
 
       /* =========================
        * REDIRECT DASHBOARD
@@ -70,7 +70,7 @@ export default function Callback() {
     } catch (err) {
       console.error(err);
 
-      sessionStorage.clear();
+      localStorage.clear();
 
       alert("Token invalid");
 

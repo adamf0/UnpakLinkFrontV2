@@ -2,13 +2,16 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useToast } from "@/Providers/ToastProvider";
-import { FaGoogle } from "react-icons/fa";
+// import { FaGoogle, FaKey } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import Logo from "@/assets/logo.svg"
+import Logo from "@/assets/logo.svg";
+import keycloak from "@/lib/keycloak";
+import sso_unpak from "@/assets/sso_unpak.png";
 
 const BASEAPI = import.meta.env.VITE_BASEAPI;
 
 export default function Login() {
+  console.log(keycloak.authenticated)
   const { addToast } = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -72,9 +75,9 @@ export default function Login() {
           addToast("error", body?.message || "Terjadi kesalahan pada server");
           return;
         } else {
-          sessionStorage.setItem("token", body.access_token);
-          sessionStorage.setItem("refresh", body.refresh_token);
-          sessionStorage.setItem("info", JSON.stringify(data));
+          localStorage.setItem("token", body.access_token);
+          localStorage.setItem("refresh", body.refresh_token);
+          localStorage.setItem("info", JSON.stringify(data));
 
           navigate("/dashboard");
         }
@@ -117,9 +120,12 @@ export default function Login() {
           {/* Buttons */}
           <div className="w-full max-w-md space-y-4">
             <AuthButton
-              icon={<FaGoogle />}
-              text="Lanjutkan menggunakan Google"
-              onClick={() => alert("fitur sso unpak belum aktif")}
+              text="Login menggunakan SSO Unpak"
+              onClick={() =>
+                keycloak.login({
+                  redirectUri: window.location.origin + "/callback_sso",
+                })
+              }
             />
           </div>
 
@@ -255,13 +261,13 @@ export default function Login() {
   );
 }
 
-function AuthButton({ icon, text, onClick }) {
+function AuthButton({ text, onClick }) {
   return (
     <button
       onClick={onClick}
       className="w-full flex items-center gap-3 border rounded-xl px-4 py-3 hover:bg-gray-50 transition"
     >
-      <div className="text-lg">{icon}</div>
+      <img src={sso_unpak} alt="sso_unpak" width={36} height={36}/>
       <span className="text-sm font-medium">{text}</span>
     </button>
   );

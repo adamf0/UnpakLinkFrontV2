@@ -45,6 +45,7 @@ const formatDateTime = (value) => {
 const BASEAPI = import.meta.env.VITE_BASEAPI;
 
 export default function LinkPage() {
+  const { addToast } = useToast();
   const { toggleSidebar } = useSidebar();
   const controller = new AbortController();
   const { getValidToken } = useAuth();

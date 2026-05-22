@@ -1,4 +1,6 @@
+import keycloak from "@/lib/keycloak";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 import React, { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext(null);
@@ -17,7 +19,7 @@ const nowInSeconds = () => Math.floor(Date.now() / 1000);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(() => sessionStorage.getItem("token"));
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
   const [userLoading, setUserLoading] = useState(false);
   const [userError, setUserError] = useState(null);
 
@@ -26,7 +28,7 @@ export function AuthProvider({ children }) {
    * ====================== */
 
   const isTokenExpired = () => {
-    const token = sessionStorage.getItem("token");
+    const token = localStorage.getItem("token");
     if (!token) return true;
 
     const payload = decodeJWT(token);
@@ -36,7 +38,7 @@ export function AuthProvider({ children }) {
   };
 
   // const isRefreshExpired = () => {
-  //   const refresh = sessionStorage.getItem("refresh");
+  //   const refresh = localStorage.getItem("refresh");
   //   if (!refresh) return true;
 
   //   const payload = decodeJWT(refresh);
@@ -54,17 +56,39 @@ export function AuthProvider({ children }) {
    * ====================== */
 
   const getValidToken = () => {
-    if (!isTokenExpired()) return sessionStorage.getItem("token");
-    // if (!isRefreshExpired()) return sessionStorage.getItem("refresh");
+    if (!isTokenExpired()) return localStorage.getItem("token");
+    // if (!isRefreshExpired()) return localStorage.getItem("refresh");
     return null;
   };
 
+  const getDecodedToken = (token) => {
+    try {
+      return jwtDecode(token);
+    } catch (e) {
+      return null;
+    }
+  };
+
   const getNameInfo = () => {
-    const info = JSON.parse(sessionStorage.getItem("info") ?? "{}");
-    return info?.Name;
+    const info = JSON.parse(localStorage.getItem("info") ?? "{}");
+    const info2 = getDecodedToken(localStorage.getItem("idToken"));
+
+    return info2?.name ?? info?.Name ?? "";
   };
   const getLevelInfo = () => {
-    const info = JSON.parse(sessionStorage.getItem("info") ?? "{}");
+    const info = JSON.parse(localStorage.getItem("info") ?? "{}");
+    const info2 = getDecodedToken(localStorage.getItem("idToken"));
+    console.log(info2?.group);
+    if ((info2?.group ?? []).includes("adm_pusat")) {
+      return "PUTIK LINK";
+    } else if ((info2?.group ?? []).includes("Mahasiswa")) {
+      return "MAHASISWA";
+    } else if ((info2?.group ?? []).includes("Dosen")) {
+      return "DOSEN LINK";
+    } else if ((info2?.group ?? []).includes("Tendik")) {
+      return "TENDIK";
+    }
+
     return info?.Level;
   };
 
@@ -110,10 +134,28 @@ export function AuthProvider({ children }) {
    * LOGOUT
    * ====================== */
 
-  const logout = () => {
-    sessionStorage.removeItem("token");
-    // sessionStorage.removeItem("refresh");
-    sessionStorage.removeItem("info");
+  const logout = async () => {
+    await fetch(
+      "https://gerbang.unpak.ac.id/realms/gateway/protocol/openid-connect/logout",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          client_id: "unpak_link_gate",
+          refresh_token: localStorage.getItem("refresh"),
+        }),
+      },
+    );
+    // await keycloak.logout({
+    //   redirectUri: window.location.origin,
+    //   idTokenHint: keycloak.idToken,
+    // });
+    localStorage.removeItem("token");
+    localStorage.removeItem("refresh");
+    localStorage.removeItem("info");
+    localStorage.removeItem("idToken");
     setUser(null);
     setToken(null);
   };
@@ -127,7 +169,7 @@ export function AuthProvider({ children }) {
         isSessionExpired,
         getValidToken,
         fetchUserInfo,
-        getNameInfo, 
+        getNameInfo,
         getLevelInfo,
         logout,
         userLoading,
