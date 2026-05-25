@@ -280,7 +280,7 @@ export default function Dashboard() {
         </h1>
       </header>
 
-      <main className="p-6 bg-gray-100">
+      <main className="h-[calc(100vh-64px)] overflow-y-auto p-6 bg-gray-100">
         {/* DATE FILTER */}
         <div ref={dateRef} className="relative max-w-md mb-6">
           <button

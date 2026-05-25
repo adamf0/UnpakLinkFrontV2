@@ -266,7 +266,7 @@ export default function LinkPage() {
         </h1>
       </header>
 
-      <main className="h-screen overflow-y-auto p-6 space-y-6 bg-gray-100">
+      <main className="h-[calc(100vh-64px)] overflow-y-auto p-6 space-y-6 bg-gray-100">
         <ShortLinkForm renderAction={() => loadData()} />
 
         {/* SEARCH + FILTER */}
