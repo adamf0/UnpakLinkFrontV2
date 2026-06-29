@@ -64,11 +64,11 @@ export default function Landing() {
                     © Unpak.link - 2023 Managed by BPSI - Universitas Pakuan
                   </div>
 
-                  <div className="flex gap-5">
-                    <SocialIcon src={instagram} />
-                    <SocialIcon src={twitter} />
-                    <SocialIcon src={facebook} />
-                    <SocialIcon src={tiktok} />
+                  <div className="flex gap-4 text-base">
+                    <a href="https://www.instagram.com/official_unpak/" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform duration-300"><FaInstagram /></a>
+                    <a href="https://www.facebook.com/unpak/" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform duration-300"><FaFacebook /></a>
+                    <a href="https://www.tiktok.com/discover/universitas-pakuan" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform duration-300"><FaTiktok /></a>
+                    <a href="https://www.youtube.com/c/UNPAKTV" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform duration-300"><FaYoutube /></a>
                   </div>
                 </div>
               </div>
