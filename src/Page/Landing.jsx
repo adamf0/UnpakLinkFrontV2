@@ -65,7 +65,7 @@ export default function Landing() {
               <div className="col-span-1 lg:col-span-12 pt-8 border-t border-white/20 mt-4">
                 <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs sm:text-sm text-center md:text-left">
                   <div>
-                    © Unpak.link - 2023 Managed by PUTIK
+                    © Unpak.link - 2023 Managed by BPSI - Universitas Pakuan
                   </div>
 
                   <div className="flex gap-5">
