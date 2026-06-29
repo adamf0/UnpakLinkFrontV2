@@ -46,11 +46,11 @@ export default function Dashboard() {
   // FILTER DATA BY DATE
   // =======================
   const filteredByDate = useMemo(() => {
+    const start = startDate ? new Date(startDate).getTime() : null;
+    const end = endDate ? new Date(endDate).getTime() : null;
     return datas.filter((item) => {
-      const itemDate = new Date(item.Created);
-      const start = startDate ? new Date(startDate) : null;
-      const end = endDate ? new Date(endDate) : null;
-      return (!start || itemDate >= start) && (!end || itemDate <= end);
+      const time = item.CreatedTime;
+      return (!start || time >= start) && (!end || time <= end);
     });
   }, [datas, startDate, endDate]);
 
@@ -147,6 +147,8 @@ export default function Dashboard() {
 
             try {
               const parsed = JSON.parse(payload);
+              parsed.CreatedTime = new Date(parsed.Created).getTime();
+              parsed.CreatedDate = parsed.Created.split("T")[0];
               result.push(parsed);
               hasNewData = true;
             } catch (err) {
@@ -154,8 +156,8 @@ export default function Dashboard() {
             }
           }
 
-          // Progressive update at most once every 400ms to keep UI responsive
-          if (hasNewData && Date.now() - lastUpdate > 400) {
+          // Progressive update at most once every 1500ms to keep UI responsive
+          if (hasNewData && Date.now() - lastUpdate > 1500) {
             setDatas([...result]);
             lastUpdate = Date.now();
           }
@@ -186,7 +188,7 @@ export default function Dashboard() {
     const map = {};
 
     filteredByDate.forEach((item) => {
-      const date = new Date(item.Created).toISOString().split("T")[0];
+      const date = item.CreatedDate || item.Created.split("T")[0];
       const link = item.LinkShort;
 
       if (!map[date]) map[date] = { date, total: 0 };
