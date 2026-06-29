@@ -1,21 +1,45 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useToast } from "@/Providers/ToastProvider";
 // import { FaGoogle, FaKey } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import Logo from "@/assets/logo.svg";
-import keycloak from "@/lib/keycloak";
+import { useKeycloak } from "@react-keycloak/web";
 import sso_unpak from "@/assets/sso_unpak.png";
 
 const BASEAPI = import.meta.env.VITE_BASEAPI;
 
 export default function Login() {
-  console.log(keycloak.authenticated)
+  const { keycloak, initialized } = useKeycloak();
   const { addToast } = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // 1. Cek jika sudah login via SSO Keycloak
+    if (initialized && keycloak?.authenticated) {
+      localStorage.setItem("token", keycloak.token || "");
+      localStorage.setItem("idToken", keycloak.idToken || "");
+      localStorage.setItem("refresh", keycloak.refreshToken || "");
+      navigate("/dashboard", { replace: true });
+      return;
+    }
+
+    // 2. Cek jika sudah login secara lokal (token masih valid)
+    const localToken = localStorage.getItem("token");
+    if (localToken) {
+      try {
+        const payload = JSON.parse(atob(localToken.split(".")[1]));
+        if (payload && payload.exp > Math.floor(Date.now() / 1000)) {
+          navigate("/dashboard", { replace: true });
+        }
+      } catch (e) {
+        // Token tidak valid, abaikan
+      }
+    }
+  }, [initialized, keycloak?.authenticated, navigate]);
 
   const {
     register,
@@ -95,6 +119,17 @@ export default function Login() {
       setLoading(false);
     }
   };
+
+  if (!initialized) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="text-gray-500 text-sm font-medium">Memeriksa sesi autentikasi...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
