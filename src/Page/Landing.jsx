@@ -3,11 +3,7 @@ import { Link } from "react-router-dom";
 import Logo from "@/assets/logo.svg"
 import Img1 from "@/assets/img-1.svg"
 import Img2 from "@/assets/img-2.svg"
-import Img3 from "@/assets/img-3.svg"
-import instagram from "@/assets/instagram.svg"
-import twitter from "@/assets/twitter.svg"
-import facebook from "@/assets/facebook.svg"
-import tiktok from "@/assets/tiktok.svg"
+import { FaInstagram, FaFacebook, FaTiktok, FaYoutube } from "react-icons/fa";
 
 export default function Landing() {
   return (
@@ -116,74 +112,94 @@ export default function Landing() {
       </section>
 
       {/* ================= FOOTER SECTION ================= */}
-      <section className="bg-[#49318f] text-white rounded-t-3xl pt-16 pb-10">
+      <section className="bg-[#49318f] text-white border-t border-white/10 rounded-t-[32px] pt-16 pb-8 font-montserrat">
         <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16">
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10">
-
-            {/* LOGO */}
-            <div className="lg:col-span-4 flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            {/* Logo */}
+            <div className="text-center md:text-left">
               <img
-                src={Logo}
-                alt="logo"
-                className="w-16"
-              />
-              <img
-                src={Img3}
-                alt="img3"
-                className="w-12"
+                src="https://assets.unpak.ac.id/images/logo/logo-unpak-simple.webp"
+                alt="Logo UNPAK"
+                className="max-h-[64px] mt-4 md:mt-8 mb-3 rounded-xl border border-white/10 bg-white/10 p-2 inline-block"
               />
             </div>
 
-            {/* INTERNAL */}
-            <div className="lg:col-span-3 space-y-4 text-center sm:text-left">
-              <p className="font-semibold text-lg">Internal link</p>
-              <ul className="space-y-2 text-sm text-gray-200">
-                <li className="hover:text-yellow-500"><Link to="https://pmb.unpak.ac.id/">PMB Online</Link></li>
-                <li className="hover:text-yellow-500"><Link to="https://monit.unpak.ac.id/">Status Server</Link></li>
-                <li className="hover:text-yellow-500"><Link to="https://unpak.ac.id/">Website publik</Link></li>
+            {/* Layanan Akademik */}
+            <div className="text-center md:text-left">
+              <h4 className="text-[#ffc107] font-bold text-sm uppercase tracking-[1px] mb-4">Layanan Akademik</h4>
+              <ul className="space-y-2 text-xs font-medium leading-relaxed">
+                <li><a href="https://simak.unpak.ac.id/" target="_blank" rel="noopener noreferrer" className="text-[#e2e8f0] hover:text-[#ffc107] transition-colors duration-150">SIMAK UNPAK</a></li>
+                <li><a href="https://lms.unpak.ac.id/" target="_blank" rel="noopener noreferrer" className="text-[#e2e8f0] hover:text-[#ffc107] transition-colors duration-150">LMS UNPAK</a></li>
+                <li><a href="https://siup.unpak.ac.id/" target="_blank" rel="noopener noreferrer" className="text-[#e2e8f0] hover:text-[#ffc107] transition-colors duration-150">SIUP UNPAK</a></li>
+                <li><a href="https://www.unpak.ac.id/perkuliahan/pengumuman/kalender-akademik-jadwal-simak" target="_blank" rel="noopener noreferrer" className="text-[#e2e8f0] hover:text-[#ffc107] transition-colors duration-150">Kalender Akademik</a></li>
               </ul>
             </div>
 
-            {/* OTHER */}
-            <div className="lg:col-span-3 space-y-4 text-center sm:text-left">
-              <p className="font-semibold text-lg">Link lainnya</p>
-              <ul className="space-y-2 text-sm text-gray-200">
-                <li className="hover:text-yellow-500"><Link to="https://lms.unpak.ac.id/">LMS Unpak</Link></li>
-                <li className="hover:text-yellow-500"><Link to="https://www.unpak.ac.id/perkuliahan/pengumuman/kalender-akademik-jadwal-simak">Kalendar Akademik</Link></li>
+            {/* Layanan Digital & Informasi */}
+            <div className="text-center md:text-left">
+              <h4 className="text-[#ffc107] font-bold text-sm uppercase tracking-[1px] mb-4">Layanan Digital & Informasi</h4>
+              <ul className="space-y-2 text-xs font-medium leading-relaxed">
+                <li><a href="https://gerbang.unpak.ac.id/" target="_blank" rel="noopener noreferrer" className="text-[#e2e8f0] hover:text-[#ffc107] transition-colors duration-150">Gerbang UNPAK</a></li>
+                <li><a href="https://pmb.unpak.ac.id/" target="_blank" rel="noopener noreferrer" className="text-[#e2e8f0] hover:text-[#ffc107] transition-colors duration-150">PMB Online</a></li>
+                <li><a href="https://unpak.link/" target="_blank" rel="noopener noreferrer" className="text-[#e2e8f0] hover:text-[#ffc107] transition-colors duration-150">UNPAK LINK</a></li>
+                <li><a href="https://uptime.unpak.ac.id/" target="_blank" rel="noopener noreferrer" className="text-[#e2e8f0] hover:text-[#ffc107] transition-colors duration-150">Status Layanan</a></li>
               </ul>
             </div>
 
-          </div>
-
-          {/* Bottom Footer */}
-          <div className="mt-14 border-t border-white/20 pt-6 text-xs sm:text-sm flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-            <div>
-              © Unpak.link - 2026 Managed by Pusat Teknologi Informasi &
-              Komunikasi Universitas Pakuan
-            </div>
-
-            <div className="flex gap-5">
-              <Link to="https://www.instagram.com/official_unpak/"><SocialIcon src={instagram} /></Link>
-              <Link to="https://x.com/official_unpak"><SocialIcon src={twitter} /></Link>
-              <Link to="https://www.facebook.com/unpak/"><SocialIcon src={facebook} /></Link>
-              <Link to="https://www.tiktok.com/discover/universitas-pakuan"><SocialIcon src={tiktok} /></Link>
+            {/* Aplikasi BPSI */}
+            <div className="text-center md:text-left">
+              <h4 className="text-[#ffc107] font-bold text-sm uppercase tracking-[1px] mb-4">Aplikasi BPSI</h4>
+              <ul className="space-y-2 text-xs font-medium leading-relaxed">
+                <li><a href="https://tools.unpak.ac.id/" target="_blank" rel="noopener noreferrer" className="text-[#e2e8f0] hover:text-[#ffc107] transition-colors duration-150">Tools Network</a></li>
+                <li><a href="https://pantau.unpak.ac.id/" target="_blank" rel="noopener noreferrer" className="text-[#e2e8f0] hover:text-[#ffc107] transition-colors duration-150">Pantau</a></li>
+                <li><a href="https://test-ipv6.unpak.ac.id/" target="_blank" rel="noopener noreferrer" className="text-[#e2e8f0] hover:text-[#ffc107] transition-colors duration-150">Cek IPv6</a></li>
+                <li><a href="http://ip.unpak.ac.id" target="_blank" rel="noopener noreferrer" className="text-[#e2e8f0] hover:text-[#ffc107] transition-colors duration-150">Cek IP Saya</a></li>
+              </ul>
             </div>
           </div>
 
+          <div className="pt-4 mt-5 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-3 text-xs text-white/75">
+            <div className="text-center md:text-left leading-relaxed">
+              © unpak.link - 2026 Bagian Perencanaan & Sistem Informasi (BPSI) - Universitas Pakuan
+            </div>
+
+            <div className="flex gap-2 text-base justify-center">
+              <a
+                href="https://www.instagram.com/official_unpak/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-full bg-white/10 border border-white/10 flex items-center justify-center text-white transition-all duration-200 hover:bg-white/20 hover:scale-110 hover:text-[#f43f5e]"
+              >
+                <FaInstagram />
+              </a>
+              <a
+                href="https://www.facebook.com/unpak/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-full bg-white/10 border border-white/10 flex items-center justify-center text-white transition-all duration-200 hover:bg-white/20 hover:scale-110 hover:text-[#3b82f6]"
+              >
+                <FaFacebook />
+              </a>
+              <a
+                href="https://www.tiktok.com/discover/universitas-pakuan"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-full bg-white/10 border border-white/10 flex items-center justify-center text-white transition-all duration-200 hover:bg-white/20 hover:scale-110 hover:text-black"
+              >
+                <FaTiktok />
+              </a>
+              <a
+                href="https://www.youtube.com/c/UNPAKTV"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-9 h-9 rounded-full bg-white/10 border border-white/10 flex items-center justify-center text-white transition-all duration-200 hover:bg-white/20 hover:scale-110 hover:text-[#ef4444]"
+              >
+                <FaYoutube />
+              </a>
+            </div>
+          </div>
         </div>
       </section>
     </div>
-  );
-}
-
-/* ===== Reusable Social Component ===== */
-function SocialIcon({ src }) {
-  return (
-    <img
-      src={src}
-      alt={src}
-      className="w-4 h-4 hover:scale-110 transition-transform duration-300 cursor-pointer"
-    />
   );
 }
