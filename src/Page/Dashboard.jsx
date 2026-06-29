@@ -30,8 +30,6 @@ export default function Dashboard() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-
-  const controller = new AbortController();
   const { getValidToken } = useAuth();
   const [loading, setLoading] = useState(false);
   const [datas, setDatas] = useState([]);
@@ -84,86 +82,101 @@ export default function Dashboard() {
   }, []);
 
   // =======================
-  // LOAD DATA SSE
+  // LOAD DATA SSE WITH PROGRESSIVE UPDATES & CLEANUP
   // =======================
-  async function loadData() {
-    setLoading(true);
-    try {
-      const res = await fetch(`${BASEAPI}/clicks?mode=sse`, {
-        method: "GET",
-        headers: {
-          Accept: "text/event-stream",
-          Authorization: `Bearer ${getValidToken()}`,
-        },
-        signal: controller.signal,
-      });
+  useEffect(() => {
+    const controller = new AbortController();
 
-      if (res.status >= 400) {
-        const text = await res.text();
-        let body;
-        try {
-          body = JSON.parse(text);
-        } catch {
-          body = text;
-        }
-        if (
-          body?.code === "Link.Validation" &&
-          typeof body?.message === "object"
-        ) {
-          const messages = Object.values(body.message).flat().join("\n");
-          addToast("error", messages);
-          return;
-        }
-        if (typeof body === "string") {
-          addToast("error", body);
-          return;
-        }
-        addToast("error", body?.message || "Terjadi kesalahan pada server");
-        return;
-      }
+    async function loadData() {
+      setLoading(true);
+      try {
+        const res = await fetch(`${BASEAPI}/clicks?mode=sse`, {
+          method: "GET",
+          headers: {
+            Accept: "text/event-stream",
+            Authorization: `Bearer ${getValidToken()}`,
+          },
+          signal: controller.signal,
+        });
 
-      if (!res.body) throw new Error("SSE not supported by browser");
-
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder("utf-8");
-      let buffer = "";
-      const result = [];
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        let index;
-        while ((index = buffer.indexOf("\n\n")) !== -1) {
-          const rawEvent = buffer.slice(0, index).trim();
-          buffer = buffer.slice(index + 2);
-
-          if (!rawEvent.startsWith("data:")) continue;
-          const payload = rawEvent.replace(/^data:\s*/, "");
-          if (!payload || payload === "start" || payload === "done") continue;
-
+        if (res.status >= 400) {
+          const text = await res.text();
+          let body;
           try {
-            const parsed = JSON.parse(payload);
-            result.push(parsed);
-          } catch (err) {
-            console.error("JSON parse error:", payload);
+            body = JSON.parse(text);
+          } catch {
+            body = text;
+          }
+          if (
+            body?.code === "Link.Validation" &&
+            typeof body?.message === "object"
+          ) {
+            const messages = Object.values(body.message).flat().join("\n");
+            addToast("error", messages);
+            return;
+          }
+          if (typeof body === "string") {
+            addToast("error", body);
+            return;
+          }
+          addToast("error", body?.message || "Terjadi kesalahan pada server");
+          return;
+        }
+
+        if (!res.body) throw new Error("SSE not supported by browser");
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder("utf-8");
+        let buffer = "";
+        const result = [];
+        let lastUpdate = Date.now();
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          let index;
+          let hasNewData = false;
+          while ((index = buffer.indexOf("\n\n")) !== -1) {
+            const rawEvent = buffer.slice(0, index).trim();
+            buffer = buffer.slice(index + 2);
+
+            if (!rawEvent.startsWith("data:")) continue;
+            const payload = rawEvent.replace(/^data:\s*/, "");
+            if (!payload || payload === "start" || payload === "done") continue;
+
+            try {
+              const parsed = JSON.parse(payload);
+              result.push(parsed);
+              hasNewData = true;
+            } catch (err) {
+              console.error("JSON parse error:", payload);
+            }
+          }
+
+          // Progressive update at most once every 400ms to keep UI responsive
+          if (hasNewData && Date.now() - lastUpdate > 400) {
+            setDatas([...result]);
+            lastUpdate = Date.now();
           }
         }
-      }
 
-      setDatas(result);
-    } catch (err) {
-      if (err.name !== "AbortError") {
-        console.error("SSE error:", err);
-        addToast("error", "Ada masalah pada aplikasi");
+        setDatas(result);
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          console.error("SSE error:", err);
+          addToast("error", "Ada masalah pada aplikasi");
+        }
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false);
     }
-  }
 
-  useEffect(() => {
     loadData();
+
+    return () => {
+      controller.abort();
+    };
   }, []);
 
   // =======================
@@ -353,7 +366,7 @@ export default function Dashboard() {
             {/* TIMELINE */}
             <div className="bg-white border rounded-2xl p-6 space-y-4">
               <h2 className="font-semibold text-lg">Visitor Timeline</h2>
-              {loading ? (
+              {datas.length === 0 && loading ? (
                 "Loading..."
               ) : (
                 <ResponsiveContainer width="100%" height={320}>
@@ -426,13 +439,13 @@ export default function Dashboard() {
               {/* GEO MAP */}
               <div className="bg-white border rounded-2xl p-6">
                 <h2 className="font-semibold text-lg mb-4">Top Country</h2>
-                {loading ? "Loading..." : <GeoCountryMap data={geoData} />}
+                {datas.length === 0 && loading ? "Loading..." : <GeoCountryMap data={geoData} />}
               </div>
 
               {/* BROWSER VERTICAL */}
               <div className="bg-white border rounded-2xl p-6">
                 <h2 className="font-semibold text-lg mb-4">Browser Usage</h2>
-                {loading ? (
+                {datas.length === 0 && loading ? (
                   "Loading..."
                 ) : (
                   <ResponsiveContainer width="100%" height={300}>
@@ -466,8 +479,8 @@ export default function Dashboard() {
             <h2 className="font-semibold text-lg mb-4">Filter Link</h2>
 
             <div className="space-y-3 mb-12">
-              {loading && "loading..."}
-              {!loading &&
+              {datas.length === 0 && loading && "loading..."}
+              {!(datas.length === 0 && loading) &&
                 linkList.map((link) => (
                   <label key={link} className="flex items-center gap-2 text-sm">
                     <input
