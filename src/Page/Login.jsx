@@ -27,16 +27,32 @@ export default function Login() {
       return;
     }
 
-    // 2. Cek jika sudah login secara lokal (token masih valid)
-    const localToken = localStorage.getItem("token");
-    if (localToken) {
-      try {
-        const payload = JSON.parse(atob(localToken.split(".")[1]));
-        if (payload && payload.exp > Math.floor(Date.now() / 1000)) {
-          navigate("/dashboard", { replace: true });
+    // 2. Cek jika sudah login secara lokal (token masih valid untuk login manual lokal)
+    if (initialized && !keycloak?.authenticated) {
+      const localToken = localStorage.getItem("token");
+      if (localToken) {
+        // Hanya auto-login jika ini BUKAN token SSO (bukan RS512)
+        const isRS512 = (token) => {
+          try {
+            const parts = token.split(".");
+            if (parts.length !== 3) return false;
+            const header = JSON.parse(atob(parts[0].replace(/-/g, "+").replace(/_/g, "/")));
+            return header.alg === "RS512";
+          } catch {
+            return false;
+          }
+        };
+
+        if (!isRS512(localToken)) {
+          try {
+            const payload = JSON.parse(atob(localToken.split(".")[1]));
+            if (payload && payload.exp > Math.floor(Date.now() / 1000)) {
+              navigate("/dashboard", { replace: true });
+            }
+          } catch (e) {
+            // Token tidak valid, abaikan
+          }
         }
-      } catch (e) {
-        // Token tidak valid, abaikan
       }
     }
   }, [initialized, keycloak?.authenticated, navigate]);
