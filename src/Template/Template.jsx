@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   LayoutDashboard,
   Link as LinkIcon,
@@ -6,6 +6,7 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
 } from "lucide-react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "@/Providers/AuthProvider";
@@ -20,6 +21,18 @@ export default function Template() {
   const { getNameInfo, getLevelInfo } = useAuth();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showMobileUser, setShowMobileUser] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setShowDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <div className="md:flex min-h-screen">
@@ -31,14 +44,21 @@ export default function Template() {
       >
         <div className="flex items-center justify-between gap-2 border-b border-gray-100 pb-4">
           {!isCollapsed ? (
-            <span className="text-xl font-extrabold text-[#49318f] tracking-wide select-none">
-              unpak.link
-            </span>
+            <div className="flex items-center gap-2">
+              <img
+                src="https://assets.unpak.ac.id/images/logo/logo-unpak.webp"
+                alt="Logo"
+                className="h-8 w-8 object-contain"
+              />
+              <span className="text-xl font-extrabold text-[#49318f] tracking-wide select-none">
+                unpak.link
+              </span>
+            </div>
           ) : (
             <img
-              src="https://assets.unpak.ac.id/images/logo/logo-unpak-simple.webp"
+              src="https://assets.unpak.ac.id/images/logo/logo-unpak.webp"
               alt="Logo"
-              className="h-8 w-8 object-contain mx-auto"
+              className="h-8 w-8 object-contain mx-auto animate-in fade-in"
             />
           )}
           <button
@@ -55,43 +75,16 @@ export default function Template() {
 
         <nav className="flex flex-col gap-2 text-gray-600 mt-4">
           <NavItem
-            icon={<LayoutDashboard size={18} />}
+            icon={<LayoutDashboard size={20} className="stroke-[2]" />}
             label={isCollapsed ? "" : "Dashboard"}
             toUrl="/dashboard"
           />
           <NavItem
-            icon={<LinkIcon size={18} />}
+            icon={<LinkIcon size={20} className="stroke-[2]" />}
             label={isCollapsed ? "" : "Links"}
             toUrl="/link"
           />
         </nav>
-
-        {/* USER PROFILE */}
-        <div className="mt-auto pt-4 border-t border-gray-100">
-          <button
-            type="button"
-            onClick={() => setShowLogoutModal(true)}
-            className={`hover:bg-red-50 hover:text-red-600 rounded-xl transition flex items-center justify-center ${
-              isCollapsed ? "w-10 h-10 mx-auto" : "w-full p-2 gap-3"
-            }`}
-            title="Keluar"
-          >
-            <div className="flex justify-center items-center bg-[#49318f] rounded-xl text-white w-10 h-10 font-bold text-lg shadow-sm shrink-0">
-              {getNameInfo()?.[0]?.toUpperCase() ?? ""}
-            </div>
-            {!isCollapsed && (
-              <div className="flex-1 text-left min-w-0">
-                <h2 className="font-semibold truncate text-sm text-gray-800">
-                  {getNameInfo()}
-                </h2>
-                <p className="text-xs text-gray-400 truncate">{getLevelInfo()}</p>
-              </div>
-            )}
-            {!isCollapsed && (
-              <LogOut className="w-4 h-4 text-gray-400 hover:text-red-600 transition shrink-0" />
-            )}
-          </button>
-        </div>
       </aside>
 
       {/* =================== MOBILE SIDEBAR =================== */}
@@ -182,7 +175,7 @@ export default function Template() {
             </button>
             
             <img
-              src="https://assets.unpak.ac.id/images/logo/logo-unpak-simple.webp"
+              src="https://assets.unpak.ac.id/images/logo/logo-unpak.webp"
               alt="Logo UNPAK"
               className="h-10 p-1 bg-white/10 rounded-lg object-contain"
             />
@@ -197,14 +190,41 @@ export default function Template() {
             </div>
           </div>
 
-          {/* Right Side: User Name and Avatar */}
-          <div className="flex items-center gap-3">
-            <span className="text-sm font-medium hidden sm:inline-block">
-              {getNameInfo()}
-            </span>
-            <div className="w-8 h-8 rounded-full bg-cyan-400 text-[#49318f] flex items-center justify-center font-bold text-sm shadow-inner">
-              {getNameInfo()?.[0]?.toUpperCase() ?? ""}
-            </div>
+          {/* Right Side: User Name and Avatar with Dropdown */}
+          <div ref={dropdownRef} className="relative">
+            <button
+              onClick={() => setShowDropdown((prev) => !prev)}
+              className="flex items-center gap-3 hover:bg-white/10 px-3 py-1.5 rounded-xl transition duration-150 cursor-pointer select-none"
+            >
+              <span className="text-sm font-semibold hidden sm:inline-block">
+                {getNameInfo()}
+              </span>
+              <div className="w-9 h-9 rounded-xl bg-cyan-400 text-[#49318f] flex items-center justify-center font-bold text-base shadow-sm shrink-0 border border-white/20">
+                {getNameInfo()?.[0]?.toUpperCase() ?? ""}
+              </div>
+              <ChevronDown size={14} className={`text-white/70 transition-transform duration-200 ${showDropdown ? "rotate-180" : ""}`} />
+            </button>
+
+            {showDropdown && (
+              <div className="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-1">
+                <div className="px-4 py-2.5 border-b border-gray-100 bg-gray-50">
+                  <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider">Masuk sebagai</p>
+                  <p className="text-sm font-bold text-gray-700 truncate">{getNameInfo()}</p>
+                  <p className="text-[10px] text-[#49318f] font-semibold mt-0.5">{getLevelInfo()}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowDropdown(false);
+                    setShowLogoutModal(true);
+                  }}
+                  className="w-full px-4 py-2.5 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 font-semibold transition"
+                >
+                  <LogOut size={16} />
+                  Keluar / Logout
+                </button>
+              </div>
+            )}
           </div>
         </header>
 
@@ -220,7 +240,7 @@ export default function Template() {
               {/* Logo */}
               <div className="text-center md:text-left">
                 <img
-                  src="https://assets.unpak.ac.id/images/logo/logo-unpak-simple.webp"
+                  src="https://assets.unpak.ac.id/images/logo/logo-unpak.webp"
                   alt="Logo UNPAK"
                   className="max-h-[64px] mt-4 md:mt-8 mb-3 rounded-xl border border-white/10 bg-white/10 p-2 inline-block"
                 />
