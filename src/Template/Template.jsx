@@ -25,8 +25,8 @@ export default function Template() {
     <div className="md:flex min-h-screen">
       {/* =================== DESKTOP SIDEBAR =================== */}
       <aside
-        className={`hidden md:flex flex-col bg-white border-r p-6 gap-6 transition-all duration-300 ${
-          isCollapsed ? "w-20" : "w-64"
+        className={`hidden md:flex flex-col bg-white border-r transition-all duration-300 ${
+          isCollapsed ? "w-16 px-2 py-6 gap-5" : "w-64 p-6 gap-6"
         }`}
       >
         <div className="flex items-center justify-between gap-2 border-b border-gray-100 pb-4">
@@ -71,7 +71,9 @@ export default function Template() {
           <button
             type="button"
             onClick={() => setShowLogoutModal(true)}
-            className="hover:bg-red-50 hover:text-red-600 rounded-xl w-full transition p-2 flex items-center justify-center gap-3"
+            className={`hover:bg-red-50 hover:text-red-600 rounded-xl transition flex items-center justify-center ${
+              isCollapsed ? "w-10 h-10 mx-auto" : "w-full p-2 gap-3"
+            }`}
             title="Keluar"
           >
             <div className="flex justify-center items-center bg-[#49318f] rounded-xl text-white w-10 h-10 font-bold text-lg shadow-sm shrink-0">

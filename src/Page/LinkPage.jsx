@@ -59,7 +59,7 @@ export default function LinkPage() {
   const [_, setNow] = useState(Date.now());
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(25);
+  const [pageSize, setPageSize] = useState(10);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -227,13 +227,24 @@ export default function LinkPage() {
     );
   });
 
-  const totalItems = filteredData.length;
+  const sortedData = useMemo(() => {
+    const list = [...(filteredData ?? [])];
+    if (list.length > 0 && list[0].CreatedAt) {
+      return list.sort((a, b) => new Date(b.CreatedAt) - new Date(a.CreatedAt));
+    }
+    if (list.length > 0 && list[0].ID) {
+      return list.sort((a, b) => b.ID - a.ID);
+    }
+    return list.reverse();
+  }, [filteredData]);
+
+  const totalItems = sortedData.length;
   const totalPages = Math.ceil(totalItems / pageSize) || 1;
 
   const paginatedData = useMemo(() => {
     const startIndex = (currentPage - 1) * pageSize;
-    return filteredData.slice(startIndex, startIndex + pageSize);
-  }, [filteredData, currentPage, pageSize]);
+    return sortedData.slice(startIndex, startIndex + pageSize);
+  }, [sortedData, currentPage, pageSize]);
 
   function renderContent() {
     if (loading) {
@@ -375,7 +386,7 @@ export default function LinkPage() {
                 }}
                 className="border border-gray-200 rounded-lg px-2.5 py-1 text-sm font-semibold text-gray-700 bg-white outline-none focus:border-[#49318f]/50 transition cursor-pointer"
               >
-                {[25, 50, 100, 500].map((size) => (
+                {[10, 25, 50, 100, 500].map((size) => (
                   <option key={size} value={size}>
                     {size}
                   </option>

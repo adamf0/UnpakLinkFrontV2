@@ -27,9 +27,19 @@ const BASEAPI = import.meta.env.VITE_BASEAPI;
 export default function Dashboard() {
   const { toggleSidebar } = useSidebar();
   const { addToast } = useToast();
+  const getNDaysAgo = (n) => {
+    const d = new Date();
+    d.setDate(d.getDate() - n);
+    return d.toISOString().split("T")[0];
+  };
+
+  const getToday = () => {
+    return new Date().toISOString().split("T")[0];
+  };
+
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [startDate, setStartDate] = useState(getNDaysAgo(7));
+  const [endDate, setEndDate] = useState(getToday());
   const { getValidToken } = useAuth();
   const [loading, setLoading] = useState(false);
   const [datas, setDatas] = useState([]);
@@ -46,11 +56,9 @@ export default function Dashboard() {
   // FILTER DATA BY DATE
   // =======================
   const filteredByDate = useMemo(() => {
-    const start = startDate ? new Date(startDate).getTime() : null;
-    const end = endDate ? new Date(endDate).getTime() : null;
     return datas.filter((item) => {
-      const time = item.CreatedTime;
-      return (!start || time >= start) && (!end || time <= end);
+      const dateStr = item.CreatedDate || item.Created.split("T")[0];
+      return (!startDate || dateStr >= startDate) && (!endDate || dateStr <= endDate);
     });
   }, [datas, startDate, endDate]);
 
@@ -304,6 +312,8 @@ export default function Dashboard() {
               <span className="font-medium">
                 {startDate && endDate
                   ? `${startDate} s/d ${endDate}`
+                  : !startDate && !endDate
+                  ? "Semua Rentang Waktu"
                   : "Pilih Rentang Tanggal"}
               </span>
             </div>
@@ -316,6 +326,80 @@ export default function Dashboard() {
           {showDatePicker && (
             <div className="absolute right-0 z-50 mt-2 w-full md:w-80 bg-white border border-gray-100 rounded-2xl shadow-xl p-4 animate-in fade-in zoom-in-95">
               <div className="space-y-4">
+                {/* QUICK SELECT OPTIONS */}
+                <div className="grid grid-cols-2 gap-2 border-b border-gray-100 pb-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStartDate(getToday());
+                      setEndDate(getToday());
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition ${
+                      startDate === getToday() && endDate === getToday()
+                        ? "bg-[#49318f]/10 text-[#49318f] border-[#49318f]/30"
+                        : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                    }`}
+                  >
+                    Hari Ini
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStartDate(getNDaysAgo(1));
+                      setEndDate(getToday());
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition ${
+                      startDate === getNDaysAgo(1) && endDate === getToday()
+                        ? "bg-[#49318f]/10 text-[#49318f] border-[#49318f]/30"
+                        : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                    }`}
+                  >
+                    Kemarin
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStartDate(getNDaysAgo(7));
+                      setEndDate(getToday());
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition ${
+                      startDate === getNDaysAgo(7) && endDate === getToday()
+                        ? "bg-[#49318f]/10 text-[#49318f] border-[#49318f]/30"
+                        : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                    }`}
+                  >
+                    7 Hari Terakhir
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStartDate(getNDaysAgo(30));
+                      setEndDate(getToday());
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition ${
+                      startDate === getNDaysAgo(30) && endDate === getToday()
+                        ? "bg-[#49318f]/10 text-[#49318f] border-[#49318f]/30"
+                        : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                    }`}
+                  >
+                    30 Hari Terakhir
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStartDate("");
+                      setEndDate("");
+                    }}
+                    className={`col-span-2 px-3 py-1.5 rounded-lg text-xs font-semibold border transition ${
+                      !startDate && !endDate
+                        ? "bg-[#49318f]/10 text-[#49318f] border-[#49318f]/30"
+                        : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                    }`}
+                  >
+                    Semua Rentang Waktu (All Time)
+                  </button>
+                </div>
+
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Start Date</label>
                   <input
