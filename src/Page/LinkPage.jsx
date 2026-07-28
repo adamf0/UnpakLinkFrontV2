@@ -733,6 +733,17 @@ function LinkCard({
   const qrRef = useRef(null);
   const BASEURL = import.meta.env.VITE_BASEURL;
 
+  const formatDisplayDate = (dateStr) => {
+    if (!dateStr) return "";
+    try {
+      const [datePart, timePart] = dateStr.split("T");
+      const [year, month, day] = datePart.split("-");
+      return `${day}/${month}/${year} ${timePart}`;
+    } catch {
+      return dateStr;
+    }
+  };
+
   const copyToClipboard = async (slug) => {
     try {
       const url = `${BASEURL}/${slug}`;
@@ -1418,6 +1429,23 @@ flex flex-col sm:flex-row gap-5 hover:shadow-md transition"
               </p>
 
               <p className="text-gray-400 text-sm truncate">{originalUrl}</p>
+
+              {start && end && (
+                <p className="text-xs text-amber-700 font-semibold mt-1.5 flex items-center gap-1.5 bg-amber-50 border border-amber-200/50 px-2.5 py-1.5 rounded-lg w-fit">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                  Aktif: {formatDisplayDate(start)} s/d {formatDisplayDate(end)}
+                </p>
+              )}
+              {start && !end && (
+                <p className="text-xs text-amber-700 font-semibold mt-1.5 flex items-center gap-1.5 bg-amber-50 border border-amber-200/50 px-2.5 py-1.5 rounded-lg w-fit">
+                  Mulai: {formatDisplayDate(start)}
+                </p>
+              )}
+              {!start && end && (
+                <p className="text-xs text-amber-700 font-semibold mt-1.5 flex items-center gap-1.5 bg-amber-50 border border-amber-200/50 px-2.5 py-1.5 rounded-lg w-fit">
+                  Expired: {formatDisplayDate(end)}
+                </p>
+              )}
 
               <div className="flex wrap gap-3 my-3">{renderButton(state)}</div>
             </div>
