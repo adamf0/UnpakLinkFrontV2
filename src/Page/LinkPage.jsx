@@ -23,7 +23,7 @@ import {
   Menu,
 } from "lucide-react";
 
-const logo_unpak = "https://assets.unpak.ac.id/images/logo/logo-unpak.webp";
+const logo_unpak = "https://assets.unpak.ac.id/images/logo/logo-unpak.png";
 
 import { QRCodeCanvas as QR } from "qrcode.react";
 import { useForm } from "react-hook-form";
