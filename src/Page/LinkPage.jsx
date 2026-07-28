@@ -247,36 +247,25 @@ export default function LinkPage() {
   }
 
   return (
-    <>
-      {/* HEADER */}
-      <header className="bg-white border-b px-6 py-4 flex justify-between items-center">
-        {/* ================= MOBILE TOGGLE ================= */}
-        <div className="md:hidden">
-          <button
-            onClick={toggleSidebar}
-            className="p-2 rounded-lg hover:bg-gray-100 transition"
-            aria-label="Open Sidebar"
-          >
-            <Menu className="w-6 h-6 text-gray-800" />
-          </button>
-        </div>
+    <div className="space-y-6">
+      {/* ================= PAGE TITLE & SUBTITLE ================= */}
+      <div>
+        <h1 className="text-2xl font-bold text-gray-800">Daftar Link</h1>
+        <p className="text-sm text-gray-500 mt-1">
+          Buat baru, kelola filter, dan pantau status link pendek Anda secara terpusat.
+        </p>
+      </div>
 
-        {/* ================= PAGE TITLE ================= */}
-        <h1 className="text-xl font-semibold text-gray-800 cursor-pointer">
-          Links
-        </h1>
-      </header>
-
-      <main className="h-[calc(100vh-64px)] overflow-y-auto p-6 space-y-6 bg-gray-100">
+      <div className="space-y-6">
         <ShortLinkForm renderAction={() => loadData()} />
 
         {/* SEARCH + FILTER */}
         <div className="flex gap-3 relative" ref={filterRef}>
-          <div className="flex items-center bg-white border rounded-xl px-4 py-2 w-full">
+          <div className="flex items-center bg-white border border-gray-200 rounded-xl px-4 py-2.5 w-full shadow-sm hover:shadow-md transition duration-300">
             <Search size={18} className="text-gray-400" />
             <input
-              placeholder="Search"
-              className="ml-2 w-full outline-none text-sm"
+              placeholder="Cari link pendek atau URL asli..."
+              className="ml-2 w-full outline-none text-sm text-gray-700 bg-transparent"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -285,27 +274,27 @@ export default function LinkPage() {
           <div className="relative">
             <button
               onClick={() => setFilterOpen((prev) => !prev)}
-              className="flex items-center gap-2 bg-white border rounded-xl px-4 py-2 text-sm hover:bg-gray-50"
+              className="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 shadow-sm transition"
             >
-              <Filter size={16} />
+              <Filter size={16} className="text-[#49318f]" />
               Filter
             </button>
 
             {filterOpen && (
-              <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg overflow-hidden border z-50 animate-in fade-in zoom-in-95">
+              <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl overflow-hidden border border-gray-100 z-50 animate-in fade-in zoom-in-95">
                 <button
                   onClick={() => {
                     setActiveFilter("active");
                     setFilterOpen(false);
                   }}
-                  className={`flex items-center gap-2 w-full px-4 py-3 text-left ${
+                  className={`flex items-center gap-2 w-full px-4 py-3 text-left text-sm font-semibold ${
                     activeFilter === "active"
-                      ? "bg-red-600 text-white"
-                      : "hover:bg-gray-50"
+                      ? "bg-[#49318f] text-white"
+                      : "hover:bg-gray-50 text-gray-700"
                   }`}
                 >
                   <Check size={16} />
-                  Active Links
+                  Link Aktif
                 </button>
 
                 <button
@@ -313,39 +302,40 @@ export default function LinkPage() {
                     setActiveFilter("archive");
                     setFilterOpen(false);
                   }}
-                  className={`flex items-center gap-2 w-full px-4 py-3 text-left ${
+                  className={`flex items-center gap-2 w-full px-4 py-3 text-left text-sm font-semibold ${
                     activeFilter === "archive"
-                      ? "bg-red-600 text-white"
-                      : "hover:bg-gray-50"
+                      ? "bg-[#49318f] text-white"
+                      : "hover:bg-gray-50 text-gray-700"
                   }`}
                 >
                   <Archive size={16} />
-                  Archived Links
+                  Diarsipkan
                 </button>
                 <button
                   onClick={() => {
                     setActiveFilter("delete");
                     setFilterOpen(false);
                   }}
-                  className={`flex items-center gap-2 w-full px-4 py-3 text-left ${
+                  className={`flex items-center gap-2 w-full px-4 py-3 text-left text-sm font-semibold ${
                     activeFilter === "delete"
-                      ? "bg-red-600 text-white"
-                      : "hover:bg-gray-50"
+                      ? "bg-[#49318f] text-white"
+                      : "hover:bg-gray-50 text-gray-700"
                   }`}
                 >
                   <Trash2 size={16} />
-                  Delete Links
+                  Sampah
                 </button>
               </div>
             )}
           </div>
         </div>
-        {/* LINK CARD */}
-        <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(450px,1fr))] auto-rows-min">
+
+        {/* LINK CARD LIST */}
+        <div className="grid gap-6 grid-cols-[repeat(auto-fit,minmax(450px,1fr))] auto-rows-min">
           {renderContent()}
         </div>
-      </main>
-    </>
+      </div>
+    </div>
   );
 }
 
@@ -566,7 +556,7 @@ function ShortLinkForm({ renderAction = () => {} }) {
 
   return (
     <form onSubmit={handleSubmit(onSave)}>
-      <div className="w-full bg-white rounded-xl shadow-sm border p-6">
+      <div className="w-full bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-300">
         {/* URL */}
         <div className="flex flex-col md:flex-row gap-3">
           <div className="flex-1">
@@ -584,8 +574,8 @@ function ShortLinkForm({ renderAction = () => {} }) {
                   }
                 },
               })}
-              className={`w-full px-4 py-3 rounded-lg border ${
-                errors.longUrl ? "border-red-500" : "border-gray-300"
+              className={`w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-[#49318f]/20 focus:border-[#49318f] text-sm ${
+                errors.longUrl ? "border-red-500" : "border-gray-200"
               }`}
             />
             {errors.longUrl && (
@@ -599,7 +589,7 @@ function ShortLinkForm({ renderAction = () => {} }) {
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-5 py-3 rounded-lg font-medium transition disabled:bg-red-300 w-full md:w-auto justify-center"
+              className="flex items-center gap-2 bg-[#49318f] hover:bg-[#382278] active:bg-[#2d1b60] text-white px-6 py-3 rounded-xl font-bold transition disabled:bg-gray-300 w-full md:w-auto justify-center shadow-sm cursor-pointer"
             >
               <LinkIcon size={18} />
               {loading ? "Loading..." : "Shorten it!"}
@@ -609,12 +599,8 @@ function ShortLinkForm({ renderAction = () => {} }) {
 
         {/* shorturl */}
         <div className="mt-4 flex flex-col sm:flex-row gap-2 sm:gap-0 items-start sm:items-center">
-          {/* <label className="block text-sm font-semibold mb-2 sm:mb-0 sm:mr-2">
-            ShortLink
-          </label> */}
-
-          <div className="flex w-full sm:flex-1 rounded-lg border overflow-hidden">
-            <span className="px-4 py-3 bg-gray-100 text-gray-600 text-sm">
+          <div className="flex w-full sm:flex-1 rounded-xl border border-gray-200 overflow-hidden focus-within:ring-2 focus-within:ring-[#49318f]/20 focus-within:border-[#49318f] transition-all">
+            <span className="px-4 py-3 bg-gray-50 text-gray-500 text-sm font-semibold select-none border-r">
               unpak.link/
             </span>
 
@@ -628,7 +614,7 @@ function ShortLinkForm({ renderAction = () => {} }) {
                   message: "Only letters, numbers, and dash allowed",
                 },
               })}
-              className={`flex-1 px-4 py-3 outline-none ${
+              className={`flex-1 px-4 py-3 outline-none text-sm text-gray-700 bg-transparent ${
                 errors.shorturl ? "border-red-500" : ""
               }`}
             />
@@ -643,7 +629,7 @@ function ShortLinkForm({ renderAction = () => {} }) {
 
         {/* DETAIL */}
         {showDetail && (
-          <div className="mt-8 flex flex-col md:flex-row gap-6 overflow-x-auto">
+          <div className="mt-8 flex flex-col md:flex-row gap-6">
             {/* Sidebar */}
             <div className="w-full md:w-64 border-r md:pr-4 space-y-2 flex-shrink-0">
               <SidebarItem
@@ -663,8 +649,11 @@ function ShortLinkForm({ renderAction = () => {} }) {
             <div className="flex-1 min-w-0">
               {/* PASSWORD */}
               {activeTab === "protected" && (
-                <div>
-                  <h2 className="text-xl font-semibold mb-4">Protected Link</h2>
+                <div className="space-y-4">
+                  <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
+                    <span className="w-1 h-4 bg-[#49318f] rounded-full"></span>
+                    Protected Link
+                  </h2>
 
                   <div className="relative">
                     <input
@@ -676,15 +665,15 @@ function ShortLinkForm({ renderAction = () => {} }) {
                           message: "Minimum 6 characters",
                         },
                       })}
-                      className={`w-full px-4 py-3 pr-12 rounded-lg border ${
-                        errors.password ? "border-red-500" : "border-gray-300"
+                      className={`w-full px-4 py-3 pr-12 rounded-xl border focus:outline-none focus:ring-2 focus:ring-[#49318f]/20 focus:border-[#49318f] text-sm ${
+                        errors.password ? "border-red-500" : "border-gray-200"
                       }`}
                     />
 
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                     >
                       {showPassword ? (
                         <Eye size={18} />
@@ -704,25 +693,26 @@ function ShortLinkForm({ renderAction = () => {} }) {
 
               {/* TIME */}
               {activeTab === "time" && (
-                <div>
-                  <h2 className="text-xl font-semibold mb-4">
+                <div className="space-y-4">
+                  <h2 className="text-base font-bold text-gray-800 flex items-center gap-2">
+                    <span className="w-1 h-4 bg-[#ffc107] rounded-full"></span>
                     Time-based Link
                   </h2>
 
-                  <div className="mt-4 flex flex-col sm:flex-row gap-4">
+                  <div className="flex flex-col sm:flex-row gap-4">
                     <div className="flex-1">
-                      <label className="block text-sm mb-1">
+                      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
                         Start (Optional)
                       </label>
                       <input
                         type="datetime-local"
                         {...register("start")}
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300"
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#49318f]/20 focus:border-[#49318f]"
                       />
                     </div>
 
                     <div className="flex-1">
-                      <label className="block text-sm mb-1">
+                      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
                         End (Optional)
                       </label>
                       <input
@@ -746,8 +736,8 @@ function ShortLinkForm({ renderAction = () => {} }) {
                             return true;
                           },
                         })}
-                        className={`w-full px-4 py-3 rounded-lg border ${
-                          errors.end ? "border-red-500" : "border-gray-300"
+                        className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-[#49318f]/20 focus:border-[#49318f] ${
+                          errors.end ? "border-red-500" : "border-gray-200"
                         }`}
                       />
                       {errors.end?.message && (
@@ -767,11 +757,11 @@ function ShortLinkForm({ renderAction = () => {} }) {
         <div className="mt-4 flex justify-center text-gray-500">
           <button
             type="button"
-            className="flex gap-2 items-center"
+            className="flex gap-2 items-center text-sm font-semibold hover:text-[#49318f] transition-colors"
             onClick={handleToggleDetail}
           >
-            {showDetail ? "Hide" : "Show"}
-            {showDetail ? <ChevronUp /> : <ChevronDown />}
+            {showDetail ? "Sembunyikan Pengaturan Detail" : "Tampilkan Pengaturan Detail"}
+            {showDetail ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
           </button>
         </div>
       </div>
@@ -784,9 +774,9 @@ function SidebarItem({ icon, label, active, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition
+      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition
       ${
-        active ? "bg-blue-50 text-blue-600" : "text-gray-600 hover:bg-gray-100"
+        active ? "bg-[#49318f]/10 text-[#49318f] font-bold" : "text-gray-600 hover:bg-gray-50"
       }`}
     >
       {icon}
@@ -1480,13 +1470,13 @@ function LinkCard({
     <>
       {/* CARD */}
       <div
-        className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 
-flex flex-col sm:flex-row gap-5 hover:shadow-md transition"
+        className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 
+flex flex-col sm:flex-row gap-5 hover:shadow-lg hover:-translate-y-0.5 transition duration-300 relative group/card"
       >
         {/* QR */}
         <div
           className="w-full sm:w-24 h-24 shrink-0 
-  bg-gray-100 rounded-lg flex items-center justify-center"
+  bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center shadow-inner"
         >
           <QR
             value={`${BASEURL}/${shortUrl}`}
@@ -1502,16 +1492,16 @@ flex flex-col sm:flex-row gap-5 hover:shadow-md transition"
         </div>
 
         {/* CONTENT */}
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 flex flex-col justify-between">
           {/* HEADER */}
           <div className="flex flex-col lg:flex-row lg:justify-between gap-4">
             {/* TEXT */}
-            <div className="min-w-0">
-              <h3 className="text-base sm:text-lg font-semibold text-gray-800 truncate">
+            <div className="min-w-0 w-full">
+              <h3 className="text-base sm:text-lg font-bold text-gray-800 truncate">
                 {title}
               </h3>
 
-              <p className="text-red-600 font-bold text-lg sm:text-xl break-all">
+              <p className="text-[#49318f] font-extrabold text-lg sm:text-xl break-all my-0.5">
                 unpak.link/{shortUrl}
               </p>
 
@@ -1534,43 +1524,43 @@ flex flex-col sm:flex-row gap-5 hover:shadow-md transition"
                 </p>
               )}
 
-              <div className="flex wrap gap-3 my-3">{renderButton(state)}</div>
+              <div className="flex wrap gap-2.5 my-3.5">{renderButton(state)}</div>
             </div>
           </div>
 
           {/* FOOTER */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mt-4">
-            <div className="flex flex-wrap gap-3 items-center">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mt-2 border-t border-gray-50 pt-3">
+            <div className="flex flex-wrap gap-2.5 items-center">
               {!isEmpty(password) ? (
                 <button
                   onClick={() => setShowProtected(true)}
-                  className="border bg-red-300 px-3 py-1.5 rounded-lg text-sm flex items-center gap-2"
+                  className="bg-[#49318f]/10 text-[#49318f] border border-[#49318f]/20 hover:bg-[#49318f]/20 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-2 transition"
                 >
-                  <LockKeyhole size={14} /> Locked
+                  <LockKeyhole size={13} /> Terproteksi
                 </button>
               ) : (
                 <button
                   onClick={() => setShowProtected(true)}
-                  className="border px-3 py-1.5 rounded-lg text-sm flex items-center gap-2"
+                  className="border border-gray-200 text-gray-600 hover:bg-gray-50 px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-2 transition"
                 >
-                  <LockKeyholeOpen size={14} /> Password
+                  <LockKeyholeOpen size={13} /> Proteksi
                 </button>
               )}
 
               {status === "expired" ? (
                 <button
-                  className="bg-red-300 text-black px-3 py-1.5 rounded-lg text-sm flex items-center gap-2"
+                  className="bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-100 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-2 transition"
                   onClick={() => setShowTime(true)}
                 >
-                  <Clock9 size={16} /> Expired
+                  <Clock9 size={13} /> Expired
                 </button>
               ) : (
                 <button
                   onClick={() => setShowTime(true)}
-                  className={`border px-3 py-1.5 rounded-lg text-sm flex items-center gap-2 
-            ${status ? "bg-green-300" : ""}`}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-2 transition
+                    ${status ? "bg-emerald-50 text-emerald-600 border border-emerald-100 hover:bg-emerald-100" : "border border-gray-200 text-gray-600 hover:bg-gray-50"}`}
                 >
-                  <Clock9 size={16} /> Time
+                  <Clock9 size={13} /> {status ? "Masa Aktif" : "Set Waktu"}
                 </button>
               )}
             </div>
@@ -1583,8 +1573,8 @@ flex flex-col sm:flex-row gap-5 hover:shadow-md transition"
       {showEdit && (
         <Modal title="Edit Link" onClose={() => setShowEdit(false)}>
           <form className="space-y-4" onSubmit={handleSubmit(onUpdate)}>
-            <div className="flex w-full sm:flex-1 rounded-lg border overflow-hidden">
-              <span className="px-4 py-3 bg-gray-100 text-gray-600 text-sm">
+            <div className="flex w-full sm:flex-1 rounded-xl border border-gray-200 overflow-hidden focus-within:ring-2 focus-within:ring-[#49318f]/20 focus-within:border-[#49318f] transition-all">
+              <span className="px-4 py-3 bg-gray-50 text-gray-500 text-sm font-semibold select-none border-r">
                 unpak.link/
               </span>
 
@@ -1598,7 +1588,7 @@ flex flex-col sm:flex-row gap-5 hover:shadow-md transition"
                     message: "Only letters, numbers, and dash allowed",
                   },
                 })}
-                className={`flex-1 px-4 py-3 outline-none ${
+                className={`flex-1 px-4 py-3 outline-none text-sm text-gray-700 bg-transparent ${
                   errors.shorturl ? "border-red-500" : ""
                 }`}
               />
@@ -1608,15 +1598,16 @@ flex flex-col sm:flex-row gap-5 hover:shadow-md transition"
                 {errors.shorturl.message}
               </p>
             )}
-            <div className="flex justify-end gap-3">
+            <div className="flex justify-end gap-3 pt-2">
               <button
-                className="px-4 py-2 rounded-lg border"
+                type="button"
+                className="px-4 py-2 rounded-xl border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition"
                 onClick={() => setShowEdit(false)}
               >
-                Cancel
+                Batal
               </button>
-              <button className="px-4 py-2 rounded-lg bg-blue-600 text-white">
-                Save
+              <button className="px-5 py-2 rounded-xl bg-[#49318f] hover:bg-[#382278] active:bg-[#2d1b60] text-white text-sm font-bold shadow-sm transition">
+                Simpan
               </button>
             </div>
           </form>
@@ -1659,8 +1650,8 @@ flex flex-col sm:flex-row gap-5 hover:shadow-md transition"
                 <div className="relative mt-1">
                   <input
                     type={showPassword ? "text" : "password"}
-                    className={`w-full border rounded-lg px-3 py-2 pr-10 ${
-                      errors.password ? "border-red-500" : "border-gray-300"
+                    className={`w-full border border-gray-200 rounded-xl px-3 py-2.5 pr-10 focus:outline-none focus:ring-2 focus:ring-[#49318f]/20 focus:border-[#49318f] text-sm ${
+                      errors.password ? "border-red-500" : ""
                     }`}
                     {...register("password", {
                       required: "Password wajib diisi",
@@ -1674,9 +1665,9 @@ flex flex-col sm:flex-row gap-5 hover:shadow-md transition"
                   <button
                     type="button"
                     onClick={() => setShowPassword((p) => !p)}
-                    className="absolute right-3 top-2.5 text-gray-500"
+                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 transition"
                   >
-                    {showPassword ? <Eye /> : <EyeClosed />}
+                    {showPassword ? <Eye size={18} /> : <EyeClosed size={18} />}
                   </button>
                 </div>
 
@@ -1689,9 +1680,9 @@ flex flex-col sm:flex-row gap-5 hover:shadow-md transition"
 
               <button
                 type="submit"
-                className="w-full bg-red-600 text-white py-2 rounded-lg"
+                className="w-full bg-[#49318f] hover:bg-[#382278] active:bg-[#2d1b60] text-white py-2.5 rounded-xl font-bold transition shadow-sm cursor-pointer"
               >
-                Save
+                Simpan
               </button>
             </form>
           ) : (
@@ -1726,21 +1717,21 @@ flex flex-col sm:flex-row gap-5 hover:shadow-md transition"
                 Click "Remove" to return the link to its public form.
               </p>
 
-              <div className="flex gap-3">
+              <div className="flex gap-3 pt-2">
                 <button
                   onClick={() => removePasswordHandler()}
                   disabled={loading}
-                  className="px-4 py-2 bg-red-500 disabled:bg-red-300 text-white rounded-lg"
+                  className="px-4 py-2 bg-rose-600 hover:bg-rose-700 disabled:bg-rose-300 text-white rounded-xl font-bold transition shadow-sm cursor-pointer"
                 >
-                  Remove
+                  Hapus Proteksi
                 </button>
 
                 <button
                   onClick={() => setProtectedSet(false)}
                   disabled={loading}
-                  className="px-4 py-2 text-black disabled:bg-gray-300 rounded-lg"
+                  className="px-4 py-2 border border-gray-200 text-gray-700 hover:bg-gray-50 disabled:bg-gray-300 rounded-xl font-semibold transition cursor-pointer"
                 >
-                  Change
+                  Ubah Sandi
                 </button>
               </div>
             </div>
@@ -1801,20 +1792,20 @@ flex flex-col sm:flex-row gap-5 hover:shadow-md transition"
               )}
             </div>
 
-            <div className="flex justify-between pt-2">
+            <div className="flex justify-between pt-4">
               <button
                 type="button"
                 onClick={() => removeTimeHandler()}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg"
+                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold transition shadow-sm cursor-pointer text-sm"
               >
-                Remove
+                Hapus Waktu
               </button>
 
               <button
                 type="submit"
-                className="px-4 py-2 bg-red-600 text-white rounded-lg"
+                className="px-5 py-2 bg-[#49318f] hover:bg-[#382278] text-white rounded-xl font-bold transition shadow-sm cursor-pointer text-sm"
               >
-                Save
+                Simpan
               </button>
             </div>
           </form>
@@ -1848,10 +1839,10 @@ flex flex-col sm:flex-row gap-5 hover:shadow-md transition"
             </p>
 
             <button
-              className="px-4 py-2 bg-red-600 text-white rounded-lg"
+              className="w-full py-2.5 bg-[#49318f] hover:bg-[#382278] active:bg-[#2d1b60] text-white rounded-xl font-bold transition shadow-sm cursor-pointer text-sm"
               onClick={handleDownload}
             >
-              Download
+              Unduh Gambar QR
             </button>
           </div>
         </Modal>
@@ -1880,13 +1871,13 @@ function IconButton({ icon, tooltip, onClick, className = "" }) {
     <div className="relative group">
       <button
         onClick={onClick}
-        className={`w-9 h-9 flex items-center justify-center border rounded-lg text-sm ${className}`}
+        className={`w-9 h-9 flex items-center justify-center border border-gray-200 rounded-xl text-gray-600 hover:border-[#49318f]/50 hover:bg-[#49318f]/5 hover:text-[#49318f] transition-all duration-200 active:scale-95 shadow-sm hover:shadow ${className}`}
       >
         {icon}
       </button>
 
       {/* Tooltip */}
-      <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs rounded bg-gray-700 text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none">
+      <span className="absolute bottom-full mb-2.5 left-1/2 -translate-x-1/2 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-gray-800 text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50 pointer-events-none shadow-md">
         {tooltip}
       </span>
     </div>

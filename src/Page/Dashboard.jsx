@@ -275,51 +275,49 @@ export default function Dashboard() {
   //   [filteredByDate],
   // );
 
+  const LocalLoader = () => (
+    <div className="flex flex-col items-center justify-center py-12 space-y-3">
+      <div className="w-8 h-8 border-4 border-[#49318f]/20 border-t-[#49318f] rounded-full animate-spin"></div>
+      <p className="text-xs text-gray-500 animate-pulse">Memuat data statistik...</p>
+    </div>
+  );
+
   return (
-    <>
-      <header className="bg-white border-b px-6 py-4 flex justify-between items-center">
-        {/* ================= MOBILE TOGGLE ================= */}
-        <div className="md:hidden">
-          <button
-            onClick={toggleSidebar}
-            className="p-2 rounded-lg hover:bg-gray-100 transition"
-            aria-label="Open Sidebar"
-          >
-            <Menu className="w-6 h-6 text-gray-800" />
-          </button>
+    <div className="space-y-6">
+      {/* ================= PAGE TITLE & SUBTITLE ================= */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
+          <p className="text-sm text-gray-500 mt-1">
+            Pantau statistik klik dan data pengunjung UnpakLink secara realtime.
+          </p>
         </div>
 
-        {/* ================= PAGE TITLE ================= */}
-        <h1 className="text-xl font-semibold text-gray-800 cursor-pointer">
-          Dashboard
-        </h1>
-      </header>
-
-      <main className="h-[calc(100vh-64px)] overflow-y-auto p-6 bg-gray-100">
         {/* DATE FILTER */}
-        <div ref={dateRef} className="relative max-w-md mb-6">
+        <div ref={dateRef} className="relative w-full md:w-auto md:min-w-[240px]">
           <button
             onClick={() => setShowDatePicker((prev) => !prev)}
-            className="bg-white border rounded-xl px-4 py-3 flex items-center justify-between w-full hover:bg-gray-50 transition"
+            className="bg-white border border-gray-200 rounded-xl px-4 py-2.5 flex items-center justify-between w-full hover:bg-gray-50 transition shadow-sm"
           >
-            <div className="flex items-center gap-3 text-gray-600">
-              <Calendar size={18} />
-              <span>
+            <div className="flex items-center gap-3 text-gray-600 text-sm">
+              <Calendar size={16} className="text-[#49318f]" />
+              <span className="font-medium">
                 {startDate && endDate
-                  ? `${startDate} — ${endDate}`
-                  : "Select date range"}
+                  ? `${startDate} s/d ${endDate}`
+                  : "Pilih Rentang Tanggal"}
               </span>
             </div>
             <ChevronDown
-              className={`transition ${showDatePicker ? "rotate-180" : ""}`}
+              size={16}
+              className={`text-gray-400 transition-transform ${showDatePicker ? "rotate-180" : ""}`}
             />
           </button>
 
           {showDatePicker && (
-            <div className="absolute z-50 mt-2 w-full bg-white border rounded-xl shadow-lg p-4 animate-in fade-in zoom-in-95">
-              <div className="space-y-3">
+            <div className="absolute right-0 z-50 mt-2 w-full md:w-80 bg-white border border-gray-100 rounded-2xl shadow-xl p-4 animate-in fade-in zoom-in-95">
+              <div className="space-y-4">
                 <div>
-                  <label className="text-xs text-gray-500">Start Date</label>
+                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Start Date</label>
                   <input
                     type="date"
                     value={startDate}
@@ -327,32 +325,32 @@ export default function Dashboard() {
                       setStartDate(e.target.value);
                       if (endDate && e.target.value > endDate) setEndDate("");
                     }}
-                    className="w-full border rounded-lg px-3 py-2 mt-1 text-sm"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 mt-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#49318f]/20 focus:border-[#49318f]"
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-gray-500">End Date</label>
+                  <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">End Date</label>
                   <input
                     type="date"
                     min={startDate}
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    className="w-full border rounded-lg px-3 py-2 mt-1 text-sm"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 mt-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#49318f]/20 focus:border-[#49318f]"
                   />
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 pt-2">
                   <button
                     onClick={() => setShowDatePicker(false)}
-                    className="flex-1 w-full bg-blue-600 text-white py-2 rounded-lg text-sm hover:bg-blue-700 transition"
+                    className="flex-1 bg-[#49318f] text-white py-2 rounded-lg text-sm font-medium hover:bg-[#382278] transition shadow-sm"
                   >
-                    Apply
+                    Terapkan
                   </button>
                   <button
                     onClick={() => {
                       setStartDate("");
                       setEndDate("");
                     }}
-                    className="flex-1 w-full bg-gray-100 py-2 rounded-lg text-sm hover:bg-gray-200 transition"
+                    className="flex-1 bg-gray-100 text-gray-700 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition"
                   >
                     Reset
                   </button>
@@ -361,142 +359,171 @@ export default function Dashboard() {
             </div>
           )}
         </div>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* ================= LEFT COLUMN ================= */}
-          <div className="lg:col-span-3 space-y-6">
-            {/* TIMELINE */}
-            <div className="bg-white border rounded-2xl p-6 space-y-4">
-              <h2 className="font-semibold text-lg">Visitor Timeline</h2>
-              {datas.length === 0 && loading ? (
-                "Loading..."
-              ) : (
-                <ResponsiveContainer width="100%" height={320}>
-                  <LineChart data={timelineData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                    <XAxis
-                      dataKey="date"
-                      tickFormatter={(value) => {
-                        const date = new Date(value);
-                        return date.toLocaleDateString("id-ID", {
-                          month: "short",
-                          year: "2-digit",
-                        });
-                      }}
-                      interval="preserveStartEnd"
-                      tick={{ fontSize: 12 }}
-                      minTickGap={20}
-                    />
-                    <YAxis allowDecimals={false} />
-                    <Tooltip
-                      content={({ active, payload, label }) => {
-                        if (!active || !payload) return null;
+      {/* ================= CONTENT GRID ================= */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* ================= LEFT COLUMN (CHARTS) ================= */}
+        <div className="lg:col-span-3 space-y-6">
+          {/* TIMELINE */}
+          <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300 space-y-6">
+            <h2 className="font-bold text-gray-800 text-lg flex items-center gap-2">
+              <span className="w-1.5 h-5 bg-[#49318f] rounded-full"></span>
+              Visitor Timeline
+            </h2>
+            {datas.length === 0 && loading ? (
+              <LocalLoader />
+            ) : (
+              <ResponsiveContainer width="100%" height={320}>
+                <LineChart data={timelineData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                  <XAxis
+                    dataKey="date"
+                    tickFormatter={(value) => {
+                      const date = new Date(value);
+                      return date.toLocaleDateString("id-ID", {
+                        month: "short",
+                        year: "2-digit",
+                      });
+                    }}
+                    interval="preserveStartEnd"
+                    tick={{ fontSize: 11, fill: "#64748b" }}
+                    minTickGap={20}
+                  />
+                  <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: "#64748b" }} />
+                  <Tooltip
+                    content={({ active, payload, label }) => {
+                      if (!active || !payload) return null;
 
-                        return (
-                          <div className="bg-white p-2 border rounded shadow">
-                            <div className="font-semibold mb-1">
-                              {new Date(label).toLocaleDateString("id-ID")}
-                            </div>
-                            {payload.map((p) => (
-                              <div
-                                key={p.dataKey}
-                                className="flex justify-between"
-                              >
-                                <span>{p.name}</span>
-                                <span>{p.value}</span>
-                              </div>
-                            ))}
+                      return (
+                        <div className="bg-white p-3 border border-gray-100 rounded-xl shadow-lg text-xs space-y-1.5">
+                          <div className="font-bold text-gray-800 border-b pb-1 mb-1">
+                            {new Date(label).toLocaleDateString("id-ID", {
+                              weekday: "long",
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })}
                           </div>
-                        );
-                      }}
-                    />
-                    <Legend />
+                          {payload.map((p) => (
+                            <div
+                              key={p.dataKey}
+                              className="flex justify-between items-center gap-6"
+                            >
+                              <span className="text-gray-500 font-medium">{p.name}</span>
+                              <span className="font-bold text-gray-800">{p.value}</span>
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    }}
+                  />
+                  <Legend wrapperStyle={{ fontSize: 12, paddingTop: 10 }} />
+                  <Line
+                    type="monotone"
+                    dataKey="total"
+                    stroke="#49318f"
+                    strokeWidth={3}
+                    dot={false}
+                    activeDot={{ r: 5 }}
+                    name="Total Klik"
+                  />
+                  {selectedLinks.map((link) => (
                     <Line
+                      key={link}
                       type="monotone"
-                      dataKey="total"
-                      stroke="#2563eb"
+                      dataKey={link}
+                      stroke={linkColors[link]}
                       strokeWidth={2}
                       dot={false}
-                      activeDot={{ r: 4 }}
-                      name="Total"
+                      name={link}
                     />
-                    {selectedLinks.map((link) => (
-                      <Line
-                        key={link}
-                        type="monotone"
-                        dataKey={link}
-                        stroke={linkColors[link]}
-                        strokeWidth={2}
-                        dot={false}
-                        name={link}
-                      />
-                    ))}
-                  </LineChart>
+                  ))}
+                </LineChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+
+          {/* ================= GEO + BROWSER (1 ROW) ================= */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* GEO MAP */}
+            <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
+              <h2 className="font-bold text-gray-800 text-lg mb-6 flex items-center gap-2">
+                <span className="w-1.5 h-5 bg-[#06b6d4] rounded-full"></span>
+                Top Country
+              </h2>
+              {datas.length === 0 && loading ? <LocalLoader /> : <GeoCountryMap data={geoData} />}
+            </div>
+
+            {/* BROWSER VERTICAL */}
+            <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
+              <h2 className="font-bold text-gray-800 text-lg mb-4 flex items-center gap-2">
+                <span className="w-1.5 h-5 bg-[#ffc107] rounded-full"></span>
+                Browser Usage
+              </h2>
+              {datas.length === 0 && loading ? (
+                <LocalLoader />
+              ) : (
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart layout="vertical" data={browserData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                    <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11, fill: "#64748b" }} />
+                    <YAxis
+                      type="category"
+                      dataKey="browser"
+                      tick={({ x, y, payload }) => (
+                        <g transform={`translate(${x},${y})`}>
+                          <foreignObject width="30" height="30" x="-15" y="-15">
+                            <div className="flex items-center justify-center w-full h-full">
+                              {getBrowserIcon(payload.value)}
+                            </div>
+                          </foreignObject>
+                        </g>
+                      )}
+                    />
+                    <Tooltip />
+                    <Bar dataKey="total" fill="#ffc107" radius={[0, 6, 6, 0]} name="Total Pengguna" />
+                  </BarChart>
                 </ResponsiveContainer>
               )}
             </div>
-
-            {/* ================= GEO + BROWSER (1 ROW) ================= */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* GEO MAP */}
-              <div className="bg-white border rounded-2xl p-6">
-                <h2 className="font-semibold text-lg mb-4">Top Country</h2>
-                {datas.length === 0 && loading ? "Loading..." : <GeoCountryMap data={geoData} />}
-              </div>
-
-              {/* BROWSER VERTICAL */}
-              <div className="bg-white border rounded-2xl p-6">
-                <h2 className="font-semibold text-lg mb-4">Browser Usage</h2>
-                {datas.length === 0 && loading ? (
-                  "Loading..."
-                ) : (
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart layout="vertical" data={browserData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis type="number" allowDecimals={false} />
-                      <YAxis
-                        type="category"
-                        dataKey="browser"
-                        tick={({ x, y, payload }) => (
-                          <g transform={`translate(${x},${y})`}>
-                            <foreignObject width="30" height="30">
-                              <div className="flex items-center justify-center">
-                                {getBrowserIcon(payload.value)}
-                              </div>
-                            </foreignObject>
-                          </g>
-                        )}
-                      />
-                      <Tooltip />
-                      <Bar dataKey="total" fill="#f59e0b" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* ================= RIGHT COLUMN ================= */}
-          <div className="bg-white border rounded-2xl p-6 h-screen overflow-y-auto ">
-            <h2 className="font-semibold text-lg mb-4">Filter Link</h2>
-
-            <div className="space-y-3 mb-12">
-              {datas.length === 0 && loading && "loading..."}
-              {!(datas.length === 0 && loading) &&
-                linkList.map((link) => (
-                  <label key={link} className="flex items-center gap-2 text-sm">
-                    <input
-                      type="checkbox"
-                      checked={selectedLinks.includes(link)}
-                      onChange={() => toggleLink(link)}
-                    />
-                    {link}
-                  </label>
-                ))}
-            </div>
           </div>
         </div>
-      </main>
-    </>
+
+        {/* ================= RIGHT COLUMN (FILTER) ================= */}
+        <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300 lg:max-h-[600px] flex flex-col">
+          <h2 className="font-bold text-gray-800 text-lg mb-4 flex items-center gap-2 border-b pb-3">
+            <span className="w-1.5 h-5 bg-[#49318f] rounded-full"></span>
+            Filter Link
+          </h2>
+
+          <div className="flex-1 overflow-y-auto space-y-2.5 pr-2">
+            {datas.length === 0 && loading && <LocalLoader />}
+            {!(datas.length === 0 && loading) && linkList.length === 0 && (
+              <p className="text-sm text-gray-400 italic text-center py-6">Tidak ada link terdeteksi</p>
+            )}
+            {!(datas.length === 0 && loading) &&
+              linkList.map((link) => (
+                <label
+                  key={link}
+                  className={`flex items-center gap-3 text-sm px-3 py-2 rounded-xl border transition cursor-pointer ${
+                    selectedLinks.includes(link)
+                      ? "border-[#49318f] bg-[#49318f]/5 text-[#49318f] font-semibold"
+                      : "border-gray-100 hover:bg-gray-50 text-gray-600"
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedLinks.includes(link)}
+                    onChange={() => toggleLink(link)}
+                    className="accent-[#49318f] rounded"
+                  />
+                  <span className="truncate">{link}</span>
+                </label>
+              ))}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
