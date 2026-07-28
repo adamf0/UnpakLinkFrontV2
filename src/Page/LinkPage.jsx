@@ -34,6 +34,7 @@ import axios from "axios";
 import { toPng } from "html-to-image";
 import { FiRotateCcw } from "react-icons/fi";
 import { useSidebar } from "@/Providers/SidebarProvider";
+import Swal from "sweetalert2";
 
 const formatDateTime = (value) => {
   if (!value) return "";
@@ -438,7 +439,6 @@ function ShortLinkForm({ renderAction = () => {} }) {
         return;
       } else {
         renderAction();
-        addToast("success", "berhasil pemberian password pada link");
         reset({
           longUrl: "",
           shorturl: "",
@@ -446,6 +446,68 @@ function ShortLinkForm({ renderAction = () => {} }) {
           start: "",
           end: "",
         });
+
+        const uuid = body?.UUID || body?.data?.UUID || body?.link?.UUID || body?.id;
+        const endAccess = body?.EndAccess || body?.data?.EndAccess || body?.link?.EndAccess;
+
+        const formatAlertDate = (dateStr) => {
+          if (!dateStr) return "";
+          try {
+            const date = new Date(dateStr);
+            const pad = (n) => String(n).padStart(2, "0");
+            return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+          } catch {
+            return dateStr;
+          }
+        };
+
+        const formattedDate = endAccess ? formatAlertDate(endAccess) : null;
+
+        const makePermanent = async () => {
+          try {
+            const dataForm = new FormData();
+            dataForm.append("start", "");
+            dataForm.append("end", "");
+            const updateRes = await axios.put(`${BASEAPI}/link/time/${uuid}`, dataForm, {
+              headers: {
+                Authorization: `Bearer ${getValidToken()}`,
+              },
+            });
+            if (updateRes.status === 200 || updateRes.data?.success) {
+              addToast("success", "Link Anda sekarang bersifat permanen!");
+              renderAction();
+            } else {
+              addToast("error", "Gagal memperbarui masa aktif link");
+            }
+          } catch (err) {
+            console.error(err);
+            addToast("error", "Terjadi kesalahan saat memproses link permanen");
+          }
+        };
+
+        if (uuid) {
+          Swal.fire({
+            title: "Link Berhasil Dibuat!",
+            html: `Link pendek Anda berhasil dibuat.<br/><br/>
+                   ⚠️ <b>Penting:</b> Secara default, link ini akan kedaluwarsa pada:<br/>
+                   <span style="color: #ea580c; font-weight: 700; font-size: 1.125rem;">${formattedDate || "7 hari mendatang"}</span>.<br/><br/>
+                   Apakah Anda ingin membuat link ini menjadi <b>Permanen</b> (tanpa batas waktu)?`,
+            icon: "success",
+            showCancelButton: true,
+            confirmButtonColor: "#0891b2",
+            cancelButtonColor: "#64748b",
+            confirmButtonText: "Ya, Buat Permanen",
+            cancelButtonText: "Biarkan Kedaluwarsa",
+          }).then((resultSwal) => {
+            if (resultSwal.isConfirmed) {
+              makePermanent();
+            } else {
+              addToast("success", "Link disimpan dengan masa aktif bawaan.");
+            }
+          });
+        } else {
+          addToast("success", "Link berhasil dibuat");
+        }
       }
     } catch (err) {
       console.error(err); //respon selain 2xx masuk nya kesini harusnya masih bagian dari try
