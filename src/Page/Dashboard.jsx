@@ -98,7 +98,12 @@ export default function Dashboard() {
     async function loadData() {
       setLoading(true);
       try {
-        const res = await fetch(`${BASEAPI}/clicks?mode=sse`, {
+        const queryParams = new URLSearchParams();
+        queryParams.set("mode", "sse");
+        if (startDate && endDate) {
+          queryParams.set("filters", `created_at:gte:${startDate}T00:00:00Z;created_at:lte:${endDate}T23:59:59Z`);
+        }
+        const res = await fetch(`${BASEAPI}/clicks?${queryParams.toString()}`, {
           method: "GET",
           headers: {
             Accept: "text/event-stream",
@@ -187,7 +192,7 @@ export default function Dashboard() {
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [startDate, endDate]);
 
   // =======================
   // TIMELINE DATA
