@@ -447,8 +447,28 @@ function ShortLinkForm({ renderAction = () => {} }) {
           end: "",
         });
 
-        const uuid = body?.UUID || body?.data?.UUID || body?.link?.UUID || body?.id;
-        const endAccess = body?.EndAccess || body?.data?.EndAccess || body?.link?.EndAccess;
+        console.log("Create Link API Success Response:", body);
+
+        const findKeyVal = (obj, targetKey) => {
+          if (!obj || typeof obj !== "object") return null;
+          const loweredTarget = targetKey.toLowerCase().replace(/[^a-z0-9]/g, "");
+          for (let k of Object.keys(obj)) {
+            const normalizedK = k.toLowerCase().replace(/[^a-z0-9]/g, "");
+            if (normalizedK === loweredTarget) {
+              return obj[k];
+            }
+          }
+          for (let k of Object.keys(obj)) {
+            if (obj[k] && typeof obj[k] === "object") {
+              const resVal = findKeyVal(obj[k], targetKey);
+              if (resVal) return resVal;
+            }
+          }
+          return null;
+        };
+
+        const uuid = findKeyVal(body, "UUID") || findKeyVal(body, "uuid") || findKeyVal(body, "id") || findKeyVal(body, "Id");
+        const endAccess = findKeyVal(body, "EndAccess") || findKeyVal(body, "endaccess") || findKeyVal(body, "end_access");
 
         const formatAlertDate = (dateStr) => {
           if (!dateStr) return "";
@@ -506,7 +526,14 @@ function ShortLinkForm({ renderAction = () => {} }) {
             }
           });
         } else {
-          addToast("success", "Link berhasil dibuat");
+          Swal.fire({
+            title: "Link Berhasil Dibuat!",
+            html: `Link pendek Anda berhasil dibuat dengan masa aktif default.<br/><br/>
+                   ⚠️ <b>Penting:</b> Secara default, link ini memiliki batas waktu aktif agar database tidak penuh.`,
+            icon: "success",
+            confirmButtonColor: "#0891b2",
+            confirmButtonText: "Selesai",
+          });
         }
       }
     } catch (err) {
