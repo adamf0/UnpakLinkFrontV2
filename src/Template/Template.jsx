@@ -155,7 +155,7 @@ export default function Template() {
                 onClick={() => {
                   setShowLogoutModal(false);
                   logout();
-                  navigate("/login");
+                  navigate("/");
                   console.log("logout logic here");
                 }}
                 className="px-4 py-2 text-sm rounded-lg bg-red-600 text-white hover:bg-red-700"

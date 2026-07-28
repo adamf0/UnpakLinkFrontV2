@@ -4,7 +4,6 @@ import keycloak from "./lib/keycloak";
 
 import Dashboard from "./Page/Dashboard";
 import LinkPage from "./Page/LinkPage";
-import Login from "./Page/Login";
 import CallbackSSO from "./Page/CallbackSSO";
 import Callback from "./Page/Callback";
 import SmartLink from "./Page/SmartLink";
@@ -43,7 +42,6 @@ export default function App() {
               <Routes>
                 <Route path="/" element={<Landing />} />
 
-                <Route path="/login" element={<Login />} />
                 <Route path="/callback" element={<Callback />} />
                 <Route path="/callback_sso" element={<CallbackSSO />} />
                 <Route path="/:shorturl" element={<SmartLink />} />

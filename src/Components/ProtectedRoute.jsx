@@ -36,7 +36,9 @@ export default function ProtectedRoute() {
   }
 
   if (isSessionExpired() || !localStorage.getItem("token") || (isRS512(localStorage.getItem("token")) && !keycloak.authenticated)) {
-    window.location.href = `${BASEURL}/login`;
+    keycloak.login({
+      redirectUri: window.location.origin + "/callback_sso",
+    });
 
     return null;
   }

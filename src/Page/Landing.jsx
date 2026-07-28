@@ -4,8 +4,11 @@ import Logo from "@/assets/logo.svg"
 import Img1 from "@/assets/img-1.svg"
 import Img2 from "@/assets/img-2.svg"
 import { FaInstagram, FaFacebook, FaTiktok, FaYoutube } from "react-icons/fa";
+import { useKeycloak } from "@react-keycloak/web";
 
 export default function Landing() {
+  const { keycloak } = useKeycloak();
+
   return (
     <div className="font-montserrat overflow-x-hidden">
 
@@ -39,12 +42,21 @@ export default function Landing() {
                 </div>
 
                 <div>
-                  <Link
-                    to="/login"
-                    className="inline-block bg-cyan-400 text-[#49318f] px-8 py-3 rounded-full font-semibold hover:bg-cyan-500 transition-all duration-300 shadow-md"
-                  >
-                    Login
-                  </Link>
+                  {keycloak?.authenticated ? (
+                    <Link
+                      to="/dashboard"
+                      className="inline-block bg-cyan-400 text-[#49318f] px-8 py-3 rounded-full font-semibold hover:bg-cyan-500 transition-all duration-300 shadow-md"
+                    >
+                      Dashboard
+                    </Link>
+                  ) : (
+                    <button
+                      onClick={() => keycloak.login({ redirectUri: window.location.origin + "/callback_sso" })}
+                      className="inline-block bg-cyan-400 text-[#49318f] px-8 py-3 rounded-full font-semibold hover:bg-cyan-500 transition-all duration-300 shadow-md cursor-pointer"
+                    >
+                      Login
+                    </button>
+                  )}
                 </div>
               </div>
 
