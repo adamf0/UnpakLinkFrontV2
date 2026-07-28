@@ -1203,7 +1203,7 @@ function LinkCard({
         addToast("error", body?.message || "Terjadi kesalahan pada server");
         return;
       } else {
-        addToast("success", "berhasil hapus waktu pada link");
+        addToast("success", "Link berhasil dihapus secara permanen");
         setProtectedSet(true);
         reset();
       }
@@ -1440,7 +1440,7 @@ function LinkCard({
           <IconButton
             icon={<Trash size={16} />}
             tooltip="Delete link"
-            onClick={() => deleteHandler()}
+            onClick={() => removeHandler()}
           />
 
           <IconButton
