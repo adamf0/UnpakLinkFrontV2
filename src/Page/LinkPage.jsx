@@ -21,6 +21,8 @@ import {
   Copy,
   Trash,
   Menu,
+  Info,
+  Share2,
 } from "lucide-react";
 
 const logo_unpak = "https://assets.unpak.ac.id/images/logo/logo-unpak.png";
@@ -277,6 +279,8 @@ export default function LinkPage() {
             status={getStatus(data?.StartAccess, data?.EndAccess)}
             state={data?.Status}
             password={data.Password}
+            createdAt={data.CreatedAt}
+            creator={data.Creator}
             renderAction={() => loadData()}
           />
         ))}
@@ -879,6 +883,8 @@ function LinkCard({
   end,
   status,
   state,
+  createdAt,
+  creator,
   renderAction = () => {},
 }) {
   const { getValidToken } = useAuth();
@@ -889,6 +895,7 @@ function LinkCard({
   const [showTime, setShowTime] = useState(false);
   const [showQR, setShowQR] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showDetail, setShowDetail] = useState(false);
 
   const { addToast } = useToast();
   const qrRef = useRef(null);
@@ -1522,6 +1529,12 @@ function LinkCard({
             tooltip="Archive link"
             onClick={() => archiveHandler()}
           />
+
+          <IconButton
+            icon={<Info size={16} />}
+            tooltip="Detail & Analisis"
+            onClick={() => setShowDetail(true)}
+          />
         </>
       );
     } else if (state == "delete") {
@@ -1934,7 +1947,167 @@ flex flex-col sm:flex-row gap-5 hover:shadow-lg hover:-translate-y-0.5 transitio
           </div>
         </Modal>
       )}
+
+      {showDetail && (
+        <DetailModal
+          shortUrl={shortUrl}
+          createdAt={createdAt}
+          creator={creator}
+          onClose={() => setShowDetail(false)}
+          getValidToken={getValidToken}
+          addToast={addToast}
+          BASEURL={BASEURL}
+        />
+      )}
     </>
+  );
+}
+
+function DetailModal({ shortUrl, createdAt, creator, onClose, getValidToken, addToast, BASEURL }) {
+  const [clickCount, setClickCount] = useState(null);
+  const [loadingClicks, setLoadingClicks] = useState(true);
+
+  useEffect(() => {
+    async function fetchClicks() {
+      try {
+        const token = getValidToken();
+        const res = await axios.get(
+          `${import.meta.env.VITE_BASEAPI}/clicks?mode=paging&page=1&limit=1&filters=short_url:eq:${shortUrl}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (res.data && typeof res.data.total === "number") {
+          setClickCount(res.data.total);
+        } else {
+          setClickCount(0);
+        }
+      } catch (err) {
+        console.error("Failed to fetch clicks for detail modal:", err);
+        setClickCount(0);
+      } finally {
+        setLoadingClicks(false);
+      }
+    }
+    fetchClicks();
+  }, [shortUrl, getValidToken]);
+
+  const handleShare = async () => {
+    const shareUrl = `${BASEURL}/${shortUrl}`;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "Bagikan Link",
+          text: `Buka link pendek UnpakLink: ${shareUrl}`,
+          url: shareUrl,
+        });
+      } catch (err) {
+        console.log("User cancelled share or share failed", err);
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        addToast("success", "Link berhasil disalin ke clipboard!");
+      } catch (err) {
+        addToast("error", "Gagal menyalin link");
+      }
+    }
+  };
+
+  const formatFullDateTime = (dateStr) => {
+    if (!dateStr) return "-";
+    try {
+      const date = new Date(dateStr);
+      const pad = (n) => String(n).padStart(2, "0");
+      const months = [
+        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+      ];
+      return `${pad(date.getDate())} ${months[date.getMonth()]} ${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+    } catch {
+      return dateStr;
+    }
+  };
+
+  return (
+    <Modal title="Detail & Analisis Link" onClose={onClose}>
+      <div className="space-y-6 py-2">
+        {/* Short Url info */}
+        <div className="bg-gray-50 border border-gray-100 rounded-2xl p-4 flex flex-col items-center text-center shadow-inner">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
+            Link Pendek
+          </p>
+          <a
+            href={`${BASEURL}/${shortUrl}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#49318f] font-extrabold text-xl sm:text-2xl hover:underline break-all"
+          >
+            unpak.link/{shortUrl}
+          </a>
+        </div>
+
+        {/* Stats card */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="bg-[#49318f]/5 border border-[#49318f]/10 rounded-2xl p-5 flex flex-col items-center justify-center text-center">
+            <span className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+              Total Klik
+            </span>
+            {loadingClicks ? (
+              <div className="w-6 h-6 border-2 border-[#49318f]/20 border-t-[#49318f] rounded-full animate-spin"></div>
+            ) : (
+              <span className="text-3xl font-extrabold text-[#49318f]">
+                {clickCount}
+              </span>
+            )}
+          </div>
+
+          <div className="bg-cyan-50/50 border border-cyan-100 rounded-2xl p-5 flex flex-col items-center justify-center text-center">
+            <span className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+              Pembuat Link
+            </span>
+            <span className="text-base font-extrabold text-cyan-700 truncate max-w-full">
+              {creator || "Tidak diketahui"}
+            </span>
+          </div>
+        </div>
+
+        {/* Timeline & Metadata */}
+        <div className="border border-gray-100 rounded-2xl p-5 space-y-4 bg-white shadow-sm">
+          <div className="flex justify-between items-center text-sm border-b border-gray-50 pb-3">
+            <span className="text-gray-400 font-medium">Tanggal Dibuat</span>
+            <span className="text-gray-700 font-bold text-right">
+              {formatFullDateTime(createdAt)}
+            </span>
+          </div>
+          <div className="flex justify-between items-center text-sm">
+            <span className="text-gray-400 font-medium">Status Link</span>
+            <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100 capitalize">
+              Aktif
+            </span>
+          </div>
+        </div>
+
+        {/* Share Button & Close */}
+        <div className="flex gap-3 pt-2">
+          <button
+            onClick={handleShare}
+            className="flex-1 bg-[#49318f] hover:bg-[#382278] active:bg-[#2d1b60] text-white px-5 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition shadow-sm cursor-pointer"
+          >
+            <Share2 size={16} />
+            Bagikan Link
+          </button>
+          <button
+            onClick={onClose}
+            className="border border-gray-200 hover:bg-gray-50 text-gray-600 px-5 py-3 rounded-xl font-bold transition cursor-pointer"
+          >
+            Tutup
+          </button>
+        </div>
+      </div>
+    </Modal>
   );
 }
 
