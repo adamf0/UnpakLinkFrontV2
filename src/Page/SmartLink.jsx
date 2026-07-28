@@ -74,82 +74,74 @@ export default function SmartLink() {
   async function loadData() {
     setLoading(true);
 
-    // setTimeout(async () => {
-      try {
-        const info = await getInformation();
-        console.log(info);
-
-        const res = await fetch(
-          `${BASEAPI}/link/short/${shorturl}?`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${getValidToken()}`,
-              "Content-Type": "application/json",
-              "X-API-KEY": "putiklink",
-              "X-IP": info.ip,
-              "X-ISO": info.country,
-              "X-COUNTRY": countries.getName(info.country, "id"),
-            },
+    try {
+      const res = await fetch(
+        `${BASEAPI}/link/short/${shorturl}?`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${getValidToken()}`,
+            "Content-Type": "application/json",
+            "X-API-KEY": "putiklink",
           },
-        );
+        },
+      );
 
-        if (res.status === 404) {
-          setMode("notfound");
-          return;
-        }
-
-        const body = await res.json();
-
-        // 🔴 Backend status validation
-        if (
-          body.Status === "deleted" ||
-          body.Status === "archive" ||
-          body.Status == null
-        ) {
-          setMode("notfound");
-          return;
-        }
-
-        setPassword(body.Password);
-        setLong(body.LongUrl);
-
-        // ================= COUNT MODE ======================
-        if (body.StartAccess && body.EndAccess) {
-          const start = new Date(body.StartAccess);
-          const end = new Date(body.EndAccess);
-
-          setStartDate(start);
-          setEndDate(end);
-          setMode("count");
-
-          // gunakan timestamp absolute
-          const now = Date.now();
-          const startTime = start.getTime();
-          const endTime = end.getTime();
-
-          if (now < startTime) setStatus("waiting");
-          else if (now >= startTime && now <= endTime) setStatus("active");
-          else setStatus("expired");
-
-          return;
-        }
-
-        // ================= PROTECT MODE ======================
-        if (body.Password) {
-          setMode("protect");
-          return;
-        }
-
-        // ================= DEFAULT MODE ======================
-        setMode("default");
-      } catch (err) {
-        console.error(err);
+      if (res.status === 404) {
         setMode("notfound");
-      } finally {
-        setLoading(false);
+        return;
       }
-    // }, 2000);
+
+      const body = await res.json();
+
+      // 🔴 Backend status validation
+      if (
+        body.Status === "deleted" ||
+        body.Status === "archive" ||
+        body.Status == null
+      ) {
+        setMode("notfound");
+        return;
+      }
+
+      setPassword(body.Password);
+      setLong(body.LongUrl);
+
+      // ================= COUNT MODE ======================
+      if (body.StartAccess && body.EndAccess) {
+        const start = new Date(body.StartAccess);
+        const end = new Date(body.EndAccess);
+
+        setStartDate(start);
+        setEndDate(end);
+        setMode("count");
+
+        // gunakan timestamp absolute
+        const now = Date.now();
+        const startTime = start.getTime();
+        const endTime = end.getTime();
+
+        if (now < startTime) setStatus("waiting");
+        else if (now >= startTime && now <= endTime) setStatus("active");
+        else setStatus("expired");
+
+        return;
+      }
+
+      // ================= PROTECT MODE ======================
+      if (body.Password) {
+        setMode("protect");
+        return;
+      }
+
+      // ================= DEFAULT MODE ======================
+      setMode("default");
+    } catch (err) {
+      console.error(err);
+      setMode("notfound");
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
