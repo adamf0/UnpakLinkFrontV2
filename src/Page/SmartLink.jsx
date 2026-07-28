@@ -221,39 +221,7 @@ export default function SmartLink() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-[#0f2a33] flex items-center justify-center px-4">
-        <div className="flex flex-col items-center text-center">
-          {/* Circle Logo */}
-          <div className="relative w-52 h-52 mb-8">
-            <div className="absolute inset-0 rounded-full border-4 border-orange-400 animate-pulse"></div>
-
-            <div
-              className={`absolute inset-3 rounded-full shadow-xl
-              bg-contain bg-center bg-no-repeat
-              transition duration-500
-            `}
-              style={{
-                backgroundImage: `url(${Logo})`,
-              }}
-            ></div>
-          </div>
-
-          {/* Loading Text */}
-          <LoadingDataDots />
-
-          <h1 className="text-white text-2xl font-semibold mt-4">
-            <span className="text-gray-300">
-              unpak.link/{shorturl ?? "---"}
-            </span>
-          </h1>
-
-          <p className="text-gray-400 mt-3 text-sm max-w-md">
-            Please wait while we validate your link...
-          </p>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   // ================= NOT FOUND ======================
