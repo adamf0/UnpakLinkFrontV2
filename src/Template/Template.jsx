@@ -161,11 +161,13 @@ export default function Template() {
                   icon={<LayoutDashboard size={20} className="stroke-[2]" />}
                   label="Dashboard"
                   toUrl="/dashboard"
+                  forceShowLabel
                 />
                 <NavItem
                   icon={<LinkIcon size={20} className="stroke-[2]" />}
                   label="Links"
                   toUrl="/link"
+                  forceShowLabel
                 />
               </nav>
 
@@ -444,25 +446,25 @@ export default function Template() {
   );
 }
 
-function NavItem({ icon, label, toUrl }) {
+function NavItem({ icon, label, toUrl, forceShowLabel = false }) {
   const { isCollapsed } = useSidebar();
+  const showLabel = forceShowLabel || !isCollapsed;
+  const layoutClass = showLabel ? "gap-3 px-4 py-3" : "justify-center w-11 h-11 mx-auto";
   return (
     <NavLink
       to={toUrl}
       end
       className={({ isActive }) =>
-        `flex items-center rounded-xl transition-all duration-200 ${
-          isCollapsed ? "justify-center w-11 h-11 mx-auto" : "gap-3 px-4 py-3"
-        } ${
+        `flex items-center rounded-xl transition-all duration-200 ${layoutClass} ${
           isActive
             ? "bg-[#49318f] text-white font-bold shadow-md shadow-black/20"
             : "text-gray-400 hover:text-white hover:bg-white/5 font-medium"
         }`
       }
-      title={isCollapsed ? label : ""}
+      title={!showLabel ? label : ""}
     >
       {icon}
-      {!isCollapsed && <span className="text-sm">{label}</span>}
+      {showLabel && <span className="text-sm">{label}</span>}
     </NavLink>
   );
 }
