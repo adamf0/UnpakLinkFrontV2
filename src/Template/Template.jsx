@@ -171,26 +171,6 @@ export default function Template() {
                 />
               </nav>
 
-              {/* ================= MOBILE USER STICKY BOTTOM ================= */}
-              <div className="mt-auto pt-4 border-t border-[#1e293b]">
-                <div className="flex flex-col bg-[#111c3a] border border-[#1e293b] rounded-xl p-3">
-                  <div className="flex flex-col gap-0.5">
-                    <p className="font-bold text-sm text-white">{getNameInfo()}</p>
-                    <p className="text-xs text-gray-400">{getLevelInfo()}</p>
-                  </div>
-
-                  <button
-                    onClick={() => {
-                      toggleSidebar();
-                      setShowLogoutModal(true);
-                    }}
-                    className="mt-3 w-full text-left text-red-400 hover:text-red-500 text-sm hover:bg-red-500/10 px-3 py-2 rounded-lg flex items-center gap-2 font-semibold transition"
-                  >
-                    <LogOut size={16} />
-                    Keluar / Logout
-                  </button>
-                </div>
-              </div>
             </div>
 
             {/* overlay hitam klik untuk tutup */}

@@ -1559,17 +1559,18 @@ flex flex-col sm:flex-row gap-5 hover:shadow-lg hover:-translate-y-0.5 transitio
       >
         {/* QR */}
         <div
-          className="w-full sm:w-24 h-24 shrink-0 
+          className="w-24 h-24 shrink-0 mx-auto sm:mx-0 
   bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center shadow-inner"
         >
           <QR
             value={`${BASEURL}/${shortUrl}`}
+            size={80}
             level="H"
             includeMargin
             imageSettings={{
               src: logo_unpak,
-              height: 50,
-              width: 50,
+              height: 20,
+              width: 20,
               excavate: true,
             }}
           />
