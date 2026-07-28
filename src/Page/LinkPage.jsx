@@ -1570,7 +1570,7 @@ flex flex-col sm:flex-row gap-5 hover:shadow-lg hover:-translate-y-0.5 transitio
               src: logo_unpak,
               height: 50,
               width: 50,
-              excavate: true,
+              excavate: false,
             }}
           />
         </div>
@@ -1913,7 +1913,7 @@ flex flex-col sm:flex-row gap-5 hover:shadow-lg hover:-translate-y-0.5 transitio
                   y: undefined,
                   height: 50,
                   width: 50,
-                  excavate: true,
+                  excavate: false,
                 }}
               />
             </div>
