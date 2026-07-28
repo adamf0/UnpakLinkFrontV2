@@ -224,6 +224,10 @@ export default function SmartLink() {
     return null;
   }
 
+  if (mode === "default" || (mode === "count" && status === "active")) {
+    return null;
+  }
+
   // ================= NOT FOUND ======================
   if (mode === "notfound") {
     return (
