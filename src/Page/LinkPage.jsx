@@ -485,15 +485,13 @@ function ShortLinkForm({ renderAction = () => {} }) {
 
         const makePermanent = async () => {
           try {
-            const dataForm = new FormData();
-            dataForm.append("start", "");
-            dataForm.append("end", "");
-            const updateRes = await axios.put(`${BASEAPI}/link/time/${uuid}`, dataForm, {
+            const updateRes = await axios.put(`${BASEAPI}/link/rollback-time/${uuid}`, {}, {
               headers: {
                 Authorization: `Bearer ${getValidToken()}`,
               },
             });
-            if (updateRes.status === 200 || updateRes.data?.success) {
+            const updateBody = updateRes.data;
+            if (updateRes.status === 200 || !updateBody?.error) {
               addToast("success", "Link Anda sekarang bersifat permanen!");
               renderAction();
             } else {
