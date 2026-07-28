@@ -1559,8 +1559,10 @@ flex flex-col sm:flex-row gap-5 hover:shadow-lg hover:-translate-y-0.5 transitio
       >
         {/* QR */}
         <div
+          onClick={() => setShowQR(true)}
           className="w-24 h-24 shrink-0 mx-auto sm:mx-0 
-  bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center shadow-inner"
+  bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center shadow-inner cursor-pointer hover:bg-gray-100/70 hover:border-[#49318f]/30 hover:scale-105 active:scale-95 transition-all duration-200"
+          title="Klik untuk memperbesar QR Code"
         >
           <QR
             value={`${BASEURL}/${shortUrl}`}
