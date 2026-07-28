@@ -4,6 +4,8 @@ import {
   Link as LinkIcon,
   LogOut,
   X,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "@/Providers/AuthProvider";
@@ -27,12 +29,29 @@ export default function Template() {
           isCollapsed ? "w-20" : "w-64"
         }`}
       >
-        <h1
-          className="text-2xl font-bold cursor-pointer"
-          onClick={toggleCollapse} // klik untuk collapse/expand desktop
-        >
-          unpak.link
-        </h1>
+        <div className="flex items-center justify-between gap-2 border-b border-gray-100 pb-4">
+          {!isCollapsed ? (
+            <span className="text-xl font-extrabold text-[#49318f] tracking-wide select-none">
+              unpak.link
+            </span>
+          ) : (
+            <img
+              src="https://assets.unpak.ac.id/images/logo/logo-unpak-simple.webp"
+              alt="Logo"
+              className="h-8 w-8 object-contain mx-auto"
+            />
+          )}
+          <button
+            type="button"
+            onClick={toggleCollapse}
+            className={`p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-[#49318f] transition duration-200 active:scale-95 ${
+              isCollapsed ? "mx-auto mt-2" : ""
+            }`}
+            title={isCollapsed ? "Buka Sidebar" : "Tutup Sidebar"}
+          >
+            {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+          </button>
+        </div>
 
         <nav className="flex flex-col gap-2 text-gray-600 mt-4">
           <NavItem
@@ -48,24 +67,27 @@ export default function Template() {
         </nav>
 
         {/* USER PROFILE */}
-        <div className="mt-auto pt-6 border-t">
+        <div className="mt-auto pt-4 border-t border-gray-100">
           <button
             type="button"
             onClick={() => setShowLogoutModal(true)}
-            className="hover:bg-gray-100 rounded-lg w-full text-left transition-colors p-2"
+            className="hover:bg-red-50 hover:text-red-600 rounded-xl w-full transition p-2 flex items-center justify-center gap-3"
+            title="Keluar"
           >
-            <div className="flex items-center gap-3">
-              <div className="flex justify-center items-center bg-blue-600 rounded-lg text-white w-10 h-10 font-semibold text-lg">
-                {getNameInfo()?.[0]?.toUpperCase() ?? ""}
-              </div>
-              <div className="flex-1">
-                <h2 className="font-semibold truncate text-sm">
+            <div className="flex justify-center items-center bg-[#49318f] rounded-xl text-white w-10 h-10 font-bold text-lg shadow-sm shrink-0">
+              {getNameInfo()?.[0]?.toUpperCase() ?? ""}
+            </div>
+            {!isCollapsed && (
+              <div className="flex-1 text-left min-w-0">
+                <h2 className="font-semibold truncate text-sm text-gray-800">
                   {getNameInfo()}
                 </h2>
-                <p className="text-xs text-gray-500">{getLevelInfo()}</p>
+                <p className="text-xs text-gray-400 truncate">{getLevelInfo()}</p>
               </div>
-              <LogOut className="w-4 h-4 text-gray-500 hover:text-red-500 transition" />
-            </div>
+            )}
+            {!isCollapsed && (
+              <LogOut className="w-4 h-4 text-gray-400 hover:text-red-600 transition shrink-0" />
+            )}
           </button>
         </div>
       </aside>
@@ -432,20 +454,24 @@ export default function Template() {
 
 /* =================== NAV COMPONENTS =================== */
 function NavItem({ icon, label, toUrl }) {
+  const { isCollapsed } = useSidebar();
   return (
     <NavLink
       to={toUrl}
       end
       className={({ isActive }) =>
-        `flex items-center gap-3 px-3 py-2 rounded-lg transition ${
+        `flex items-center rounded-xl px-3 py-2.5 transition-all duration-200 ${
+          isCollapsed ? "justify-center" : "gap-3"
+        } ${
           isActive
-            ? "bg-[#49318f]/10 text-[#49318f] font-semibold"
-            : "hover:bg-gray-100 text-gray-600"
+            ? "bg-[#49318f]/10 text-[#49318f] font-bold"
+            : "hover:bg-gray-100 text-gray-600 hover:text-gray-900"
         }`
       }
+      title={isCollapsed ? label : ""}
     >
       {icon}
-      <span>{label}</span>
+      {!isCollapsed && <span>{label}</span>}
     </NavLink>
   );
 }

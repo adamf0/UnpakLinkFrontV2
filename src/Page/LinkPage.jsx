@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import {
   Search,
   Filter,
@@ -58,6 +58,12 @@ export default function LinkPage() {
   const [activeFilter, setActiveFilter] = useState("active");
   const [_, setNow] = useState(Date.now());
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeFilter, searchTerm]);
 
   const filterRef = useRef(null);
 
@@ -221,14 +227,35 @@ export default function LinkPage() {
     );
   });
 
+  const totalItems = filteredData.length;
+  const totalPages = Math.ceil(totalItems / pageSize) || 1;
+
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * pageSize;
+    return filteredData.slice(startIndex, startIndex + pageSize);
+  }, [filteredData, currentPage, pageSize]);
+
   function renderContent() {
     if (loading) {
-      return <div className="text-gray-500">Loading...</div>;
+      return (
+        <div className="col-span-full flex flex-col items-center justify-center py-12 space-y-3">
+          <div className="w-8 h-8 border-4 border-[#49318f]/20 border-t-[#49318f] rounded-full animate-spin"></div>
+          <p className="text-xs text-gray-500 animate-pulse">Memuat daftar link...</p>
+        </div>
+      );
+    }
+
+    if (paginatedData.length === 0) {
+      return (
+        <div className="col-span-full bg-white rounded-2xl border border-gray-100 p-12 text-center shadow-sm">
+          <p className="text-gray-400 text-sm italic">Tidak ada link ditemukan.</p>
+        </div>
+      );
     }
 
     return (
       <>
-        {(filteredData ?? []).map((data) => (
+        {paginatedData.map((data) => (
           <LinkCard
             key={data.UUID}
             uuid={data.UUID}
@@ -236,7 +263,7 @@ export default function LinkPage() {
             originalUrl={data.LongUrl}
             start={parseDate(data.StartAccess)}
             end={parseDate(data.EndAccess)}
-            status={getStatus(data?.StartAccess, data?.EndAccess)} // update otomatis karen atic time. jika jam sekarang barada dibawah start = "belum berlangsung", sekarang beada di antara start & end maka "berlangsung", jika diluar end maka "expied"
+            status={getStatus(data?.StartAccess, data?.EndAccess)}
             state={data?.Status}
             password={data.Password}
             renderAction={() => loadData()}
@@ -334,6 +361,52 @@ export default function LinkPage() {
         <div className="grid gap-6 grid-cols-[repeat(auto-fit,minmax(450px,1fr))] auto-rows-min">
           {renderContent()}
         </div>
+
+        {/* PAGINATION CONTROLS */}
+        {totalItems > 0 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white border border-gray-100 rounded-2xl p-4 shadow-sm mt-6">
+            <div className="flex items-center gap-2 text-sm text-gray-500 font-medium">
+              <span>Tampilkan</span>
+              <select
+                value={pageSize}
+                onChange={(e) => {
+                  setPageSize(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="border border-gray-200 rounded-lg px-2.5 py-1 text-sm font-semibold text-gray-700 bg-white outline-none focus:border-[#49318f]/50 transition cursor-pointer"
+              >
+                {[25, 50, 100, 500].map((size) => (
+                  <option key={size} value={size}>
+                    {size}
+                  </option>
+                ))}
+              </select>
+              <span>link per halaman</span>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                className="px-4 py-2 border border-gray-200 hover:border-[#49318f]/50 hover:bg-[#49318f]/5 hover:text-[#49318f] rounded-xl text-sm font-semibold text-gray-600 transition disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-gray-600 disabled:hover:border-gray-200 disabled:cursor-not-allowed flex items-center gap-1 cursor-pointer"
+              >
+                Sebelumnya
+              </button>
+
+              <span className="text-sm font-bold text-gray-700">
+                Halaman {currentPage} dari {totalPages}
+              </span>
+
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                className="px-4 py-2 border border-gray-200 hover:border-[#49318f]/50 hover:bg-[#49318f]/5 hover:text-[#49318f] rounded-xl text-sm font-semibold text-gray-600 transition disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-gray-600 disabled:hover:border-gray-200 disabled:cursor-not-allowed flex items-center gap-1 cursor-pointer"
+              >
+                Selanjutnya
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
