@@ -462,6 +462,12 @@ export default function Dashboard() {
             </h2>
             {datas.length === 0 && loading ? (
               <LocalLoader />
+            ) : datas.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-[320px] text-gray-400 space-y-2">
+                <span className="text-4xl">📊</span>
+                <p className="font-semibold text-gray-500">Tidak ada data statistik pada rentang waktu ini</p>
+                <p className="text-xs">Coba pilih rentang waktu yang lain atau buat klik baru</p>
+              </div>
             ) : (
               <ResponsiveContainer width="100%" height={320}>
                 <LineChart data={timelineData}>
@@ -541,7 +547,16 @@ export default function Dashboard() {
                 <span className="w-1.5 h-5 bg-[#06b6d4] rounded-full"></span>
                 Top Country
               </h2>
-              {datas.length === 0 && loading ? <LocalLoader /> : <GeoCountryMap data={geoData} />}
+               {datas.length === 0 && loading ? (
+                 <LocalLoader />
+               ) : datas.length === 0 ? (
+                 <div className="flex flex-col items-center justify-center h-[350px] text-gray-400 space-y-2 border border-dashed border-gray-100 rounded-2xl">
+                   <span className="text-4xl">🌍</span>
+                   <p className="font-semibold text-gray-500">Tidak ada data lokasi</p>
+                 </div>
+               ) : (
+                 <GeoCountryMap data={geoData} />
+               )}
             </div>
 
             {/* BROWSER VERTICAL */}
@@ -550,10 +565,15 @@ export default function Dashboard() {
                 <span className="w-1.5 h-5 bg-[#ffc107] rounded-full"></span>
                 Browser Usage
               </h2>
-              {datas.length === 0 && loading ? (
-                <LocalLoader />
-              ) : (
-                <ResponsiveContainer width="100%" height={300}>
+               {datas.length === 0 && loading ? (
+                 <LocalLoader />
+               ) : datas.length === 0 ? (
+                 <div className="flex flex-col items-center justify-center h-[300px] text-gray-400 space-y-2 border border-dashed border-gray-100 rounded-2xl">
+                   <span className="text-4xl">🌐</span>
+                   <p className="font-semibold text-gray-500">Tidak ada data browser</p>
+                 </div>
+               ) : (
+                 <ResponsiveContainer width="100%" height={300}>
                   <BarChart layout="vertical" data={browserData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                     <XAxis type="number" allowDecimals={false} tick={{ fontSize: 11, fill: "#64748b" }} />
