@@ -209,7 +209,7 @@ export default function Template() {
                 {/* Logo */}
                 <div className="text-center md:text-left">
                   <img
-                    src="https://assets.unpak.ac.id/images/logo/logo-unpak.webp"
+                    src="https://assets.unpak.ac.id/images/logo/logo-unpak-simple.webp"
                     alt="Logo UNPAK"
                     className="max-h-[64px] mt-4 md:mt-8 mb-3 rounded-xl border border-white/10 bg-white/10 p-2 inline-block"
                   />
