@@ -2017,7 +2017,7 @@ function DetailModal({ shortUrl, createdAt, creator, onClose, getValidToken, add
   };
 
   const formatFullDateTime = (dateStr) => {
-    if (!dateStr) return "-";
+    if (!dateStr || dateStr.startsWith("0001-01-01")) return "-";
     try {
       const date = new Date(dateStr);
       const pad = (n) => String(n).padStart(2, "0");
