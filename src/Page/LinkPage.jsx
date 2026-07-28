@@ -369,7 +369,7 @@ export default function LinkPage() {
         </div>
 
         {/* LINK CARD LIST */}
-        <div className="grid gap-6 grid-cols-[repeat(auto-fit,minmax(450px,1fr))] auto-rows-min">
+        <div className="grid gap-6 grid-cols-[repeat(auto-fit,minmax(min(100%,450px),1fr))] auto-rows-min">
           {renderContent()}
         </div>
 
@@ -1609,7 +1609,7 @@ flex flex-col sm:flex-row gap-5 hover:shadow-lg hover:-translate-y-0.5 transitio
                 </p>
               )}
 
-              <div className="flex wrap gap-2.5 my-3.5">{renderButton(state)}</div>
+              <div className="flex flex-wrap gap-2.5 my-3.5">{renderButton(state)}</div>
             </div>
           </div>
 
