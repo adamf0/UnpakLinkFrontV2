@@ -58,6 +58,7 @@ export default function LinkPage() {
   const [datas, setDatas] = useState([]);
   const [filterOpen, setFilterOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState("active");
+  const [typeFilter, setTypeFilter] = useState("all");
   const [_, setNow] = useState(Date.now());
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -65,7 +66,7 @@ export default function LinkPage() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [activeFilter, searchTerm]);
+  }, [activeFilter, searchTerm, typeFilter]);
 
   const filterRef = useRef(null);
 
@@ -223,26 +224,25 @@ export default function LinkPage() {
 
   const filteredData = (datas ?? []).filter((data) => {
     const term = searchTerm.toLowerCase();
-    return (
+    const matchesSearch =
       data.ShortUrl?.toLowerCase().includes(term) ||
-      data.LongUrl?.toLowerCase().includes(term)
-    );
+      data.LongUrl?.toLowerCase().includes(term);
+
+    if (!matchesSearch) return false;
+
+    if (typeFilter === "permanent") {
+      return !data.StartAccess && !data.EndAccess;
+    }
+    if (typeFilter === "temporary") {
+      return data.StartAccess && data.EndAccess;
+    }
+
+    return true;
   });
 
   const sortedData = useMemo(() => {
     const list = [...(filteredData ?? [])];
-    return list.sort((a, b) => {
-      const dateA = a.CreatedAt ? new Date(a.CreatedAt) : new Date(0);
-      const dateB = b.CreatedAt ? new Date(b.CreatedAt) : new Date(0);
-      
-      const timeA = a.CreatedAt && !a.CreatedAt.startsWith("0001-01-01") ? dateA.getTime() : 0;
-      const timeB = b.CreatedAt && !b.CreatedAt.startsWith("0001-01-01") ? dateB.getTime() : 0;
-      
-      if (timeA !== timeB) {
-        return timeB - timeA;
-      }
-      return b.ID - a.ID;
-    });
+    return list.sort((a, b) => b.ID - a.ID);
   }, [filteredData]);
 
   const totalItems = sortedData.length;
@@ -329,33 +329,36 @@ export default function LinkPage() {
 
             {filterOpen && (
               <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl overflow-hidden border border-gray-100 z-50 animate-in fade-in zoom-in-95">
+                {/* SECTION: STATUS */}
+                <div className="px-4 py-2 bg-gray-50 border-b border-gray-100 text-[10px] font-extrabold text-gray-400 uppercase tracking-wider">
+                  Status Link
+                </div>
                 <button
                   onClick={() => {
                     setActiveFilter("active");
                     setFilterOpen(false);
                   }}
-                  className={`flex items-center gap-2 w-full px-4 py-3 text-left text-sm font-semibold ${
+                  className={`flex items-center gap-2 w-full px-4 py-2.5 text-left text-sm font-semibold ${
                     activeFilter === "active"
                       ? "bg-[#49318f] text-white"
                       : "hover:bg-gray-50 text-gray-700"
                   }`}
                 >
-                  <Check size={16} />
+                  <Check size={14} className={activeFilter === "active" ? "text-white" : "text-transparent"} />
                   Link Aktif
                 </button>
-
                 <button
                   onClick={() => {
                     setActiveFilter("archive");
                     setFilterOpen(false);
                   }}
-                  className={`flex items-center gap-2 w-full px-4 py-3 text-left text-sm font-semibold ${
+                  className={`flex items-center gap-2 w-full px-4 py-2.5 text-left text-sm font-semibold ${
                     activeFilter === "archive"
                       ? "bg-[#49318f] text-white"
                       : "hover:bg-gray-50 text-gray-700"
                   }`}
                 >
-                  <Archive size={16} />
+                  <Check size={14} className={activeFilter === "archive" ? "text-white" : "text-transparent"} />
                   Diarsipkan
                 </button>
                 <button
@@ -363,14 +366,61 @@ export default function LinkPage() {
                     setActiveFilter("delete");
                     setFilterOpen(false);
                   }}
-                  className={`flex items-center gap-2 w-full px-4 py-3 text-left text-sm font-semibold ${
+                  className={`flex items-center gap-2 w-full px-4 py-2.5 text-left text-sm font-semibold ${
                     activeFilter === "delete"
                       ? "bg-[#49318f] text-white"
                       : "hover:bg-gray-50 text-gray-700"
                   }`}
                 >
-                  <Trash2 size={16} />
+                  <Check size={14} className={activeFilter === "delete" ? "text-white" : "text-transparent"} />
                   Sampah
+                </button>
+
+                {/* SECTION: TIPE LINK */}
+                <div className="px-4 py-2 bg-gray-50 border-t border-b border-gray-100 text-[10px] font-extrabold text-gray-400 uppercase tracking-wider">
+                  Tipe Link
+                </div>
+                <button
+                  onClick={() => {
+                    setTypeFilter("all");
+                    setFilterOpen(false);
+                  }}
+                  className={`flex items-center gap-2 w-full px-4 py-2.5 text-left text-sm font-semibold ${
+                    typeFilter === "all"
+                      ? "bg-[#49318f] text-white"
+                      : "hover:bg-gray-50 text-gray-700"
+                  }`}
+                >
+                  <Check size={14} className={typeFilter === "all" ? "text-white" : "text-transparent"} />
+                  Semua Tipe
+                </button>
+                <button
+                  onClick={() => {
+                    setTypeFilter("permanent");
+                    setFilterOpen(false);
+                  }}
+                  className={`flex items-center gap-2 w-full px-4 py-2.5 text-left text-sm font-semibold ${
+                    typeFilter === "permanent"
+                      ? "bg-[#49318f] text-white"
+                      : "hover:bg-gray-50 text-gray-700"
+                  }`}
+                >
+                  <Check size={14} className={typeFilter === "permanent" ? "text-white" : "text-transparent"} />
+                  Hanya Permanen
+                </button>
+                <button
+                  onClick={() => {
+                    setTypeFilter("temporary");
+                    setFilterOpen(false);
+                  }}
+                  className={`flex items-center gap-2 w-full px-4 py-2.5 text-left text-sm font-semibold ${
+                    typeFilter === "temporary"
+                      ? "bg-[#49318f] text-white"
+                      : "hover:bg-gray-50 text-gray-700"
+                  }`}
+                >
+                  <Check size={14} className={typeFilter === "temporary" ? "text-white" : "text-transparent"} />
+                  Hanya Masa Aktif
                 </button>
               </div>
             )}
@@ -1959,6 +2009,8 @@ flex flex-col sm:flex-row gap-5 hover:shadow-lg hover:-translate-y-0.5 transitio
           shortUrl={shortUrl}
           createdAt={createdAt}
           creator={creator}
+          start={start}
+          end={end}
           onClose={() => setShowDetail(false)}
           getValidToken={getValidToken}
           addToast={addToast}
@@ -1969,9 +2021,21 @@ flex flex-col sm:flex-row gap-5 hover:shadow-lg hover:-translate-y-0.5 transitio
   );
 }
 
-function DetailModal({ shortUrl, createdAt, creator, onClose, getValidToken, addToast, BASEURL }) {
+function DetailModal({ shortUrl, createdAt, creator, start, end, onClose, getValidToken, addToast, BASEURL }) {
   const [clickCount, setClickCount] = useState(null);
   const [loadingClicks, setLoadingClicks] = useState(true);
+
+  const formatDisplayDateLocal = (dateStr) => {
+    if (!dateStr || dateStr.startsWith("0001")) return "";
+    try {
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return dateStr;
+      const pad = (n) => String(n).padStart(2, "0");
+      return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    } catch {
+      return dateStr;
+    }
+  };
 
   useEffect(() => {
     async function fetchClicks() {
@@ -2086,6 +2150,20 @@ function DetailModal({ shortUrl, createdAt, creator, onClose, getValidToken, add
             <span className="text-gray-400 font-medium">Tanggal Dibuat</span>
             <span className="text-gray-700 font-bold text-right">
               {formatFullDateTime(createdAt)}
+            </span>
+          </div>
+          <div className="flex justify-between items-center text-sm border-b border-gray-50 pb-3">
+            <span className="text-gray-400 font-medium">Masa Aktif</span>
+            <span className="text-right">
+              {start && end ? (
+                <span className="px-2.5 py-1 rounded-full bg-orange-50 text-orange-600 border border-orange-100 text-xs font-bold">
+                  {formatDisplayDateLocal(start)} s/d {formatDisplayDateLocal(end)}
+                </span>
+              ) : (
+                <span className="px-2.5 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-100 text-xs font-bold">
+                  Permanen (Tanpa Batas)
+                </span>
+              )}
             </span>
           </div>
           <div className="flex justify-between items-center text-sm">
