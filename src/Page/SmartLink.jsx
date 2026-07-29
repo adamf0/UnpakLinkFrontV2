@@ -55,6 +55,15 @@ export default function SmartLink() {
   const { addToast } = useToast();
   const { getValidToken } = useAuth();
 
+  const isMounted = React.useRef(true);
+
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
   const [loading, setLoading] = useState(true);
   const [mode, setMode] = useState(null); // notfound | protect | count | default
   const [status, setStatus] = useState(null); // waiting | active | expired
@@ -88,12 +97,16 @@ export default function SmartLink() {
         },
       );
 
+      if (!isMounted.current) return;
+
       if (res.status === 404) {
         setMode("notfound");
         return;
       }
 
       const body = await res.json();
+
+      if (!isMounted.current) return;
 
       // 🔴 Backend status validation
       if (
@@ -139,9 +152,13 @@ export default function SmartLink() {
       setMode("default");
     } catch (err) {
       console.error(err);
-      setMode("notfound");
+      if (isMounted.current) {
+        setMode("notfound");
+      }
     } finally {
-      setLoading(false);
+      if (isMounted.current) {
+        setLoading(false);
+      }
     }
   }
 
