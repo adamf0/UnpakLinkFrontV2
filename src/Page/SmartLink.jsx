@@ -201,13 +201,10 @@ export default function SmartLink() {
     if (!long) return;
 
     if (mode === "default" || (mode === "count" && status === "active")) {
-      // const timer = setTimeout(() => {
-        window.location.href = long;
-      // }, 5000);
-
-      return () => clearTimeout(timer);
+      if (password) return;
+      window.location.href = long;
     }
-  }, [mode, status, long]);
+  }, [mode, status, long, password]);
 
   const format = (num) => String(num).padStart(2, "0");
   const isExpired = status === "expired";
@@ -225,7 +222,11 @@ export default function SmartLink() {
   }
 
   if (mode === "default" || (mode === "count" && status === "active")) {
-    return null;
+    if (password) {
+      // Biarkan jatuh ke bawah untuk merender form proteksi kata sandi
+    } else {
+      return null;
+    }
   }
 
   // ================= NOT FOUND ======================
@@ -272,7 +273,7 @@ export default function SmartLink() {
   }
 
   // ================= PROTECT ======================
-  if (mode === "protect") {
+  if (mode === "protect" || (mode === "count" && status === "active" && password)) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-sm p-8">
