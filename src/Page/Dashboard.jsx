@@ -253,7 +253,10 @@ export default function Dashboard() {
   const geoData = useMemo(() => {
     const map = {};
     filteredByDate.forEach((item) => {
-      const id = item.ISO || "Unknown";
+      let id = item.ISO || "ID";
+      if (id === "Unknown" || id.trim() === "") {
+        id = "ID";
+      }
       if (!map[id]) map[id] = 0;
       map[id]++;
     });
@@ -477,8 +480,8 @@ export default function Dashboard() {
                     tickFormatter={(value) => {
                       const date = new Date(value);
                       return date.toLocaleDateString("id-ID", {
+                        day: "numeric",
                         month: "short",
-                        year: "2-digit",
                       });
                     }}
                     interval="preserveStartEnd"
