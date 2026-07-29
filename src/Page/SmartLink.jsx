@@ -3,6 +3,7 @@ import { Eye, EyeOff, Lock } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { useToast } from "@/Providers/ToastProvider";
 import { useAuth } from "@/Providers/AuthProvider";
+import { useKeycloak } from "@react-keycloak/web";
 import { getInformation } from "@/lib/utils";
 import countries from "i18n-iso-countries";
 import Logo from "@/assets/logo.svg";
@@ -54,6 +55,7 @@ export default function SmartLink() {
   const { shorturl } = useParams();
   const { addToast } = useToast();
   const { getValidToken } = useAuth();
+  const { initialized } = useKeycloak();
 
   const isMounted = React.useRef(true);
 
@@ -163,8 +165,10 @@ export default function SmartLink() {
   }
 
   useEffect(() => {
-    loadData();
-  }, [shorturl]);
+    if (initialized && shorturl) {
+      loadData();
+    }
+  }, [initialized, shorturl]);
 
   // ================= STATUS HELPER ======================
   const getStatus = () => {
