@@ -231,13 +231,18 @@ export default function LinkPage() {
 
   const sortedData = useMemo(() => {
     const list = [...(filteredData ?? [])];
-    if (list.length > 0 && list[0].CreatedAt) {
-      return list.sort((a, b) => new Date(b.CreatedAt) - new Date(a.CreatedAt));
-    }
-    if (list.length > 0 && list[0].ID) {
-      return list.sort((a, b) => b.ID - a.ID);
-    }
-    return list.reverse();
+    return list.sort((a, b) => {
+      const dateA = a.CreatedAt ? new Date(a.CreatedAt) : new Date(0);
+      const dateB = b.CreatedAt ? new Date(b.CreatedAt) : new Date(0);
+      
+      const timeA = a.CreatedAt && !a.CreatedAt.startsWith("0001-01-01") ? dateA.getTime() : 0;
+      const timeB = b.CreatedAt && !b.CreatedAt.startsWith("0001-01-01") ? dateB.getTime() : 0;
+      
+      if (timeA !== timeB) {
+        return timeB - timeA;
+      }
+      return b.ID - a.ID;
+    });
   }, [filteredData]);
 
   const totalItems = sortedData.length;
@@ -902,11 +907,12 @@ function LinkCard({
   const BASEURL = import.meta.env.VITE_BASEURL;
 
   const formatDisplayDate = (dateStr) => {
-    if (!dateStr) return "";
+    if (!dateStr || dateStr.startsWith("0001-01-01")) return "";
     try {
-      const [datePart, timePart] = dateStr.split("T");
-      const [year, month, day] = datePart.split("-");
-      return `${day}/${month}/${year} ${timePart}`;
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return dateStr;
+      const pad = (n) => String(n).padStart(2, "0");
+      return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
     } catch {
       return dateStr;
     }
