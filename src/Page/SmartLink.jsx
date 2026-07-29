@@ -72,6 +72,7 @@ export default function SmartLink() {
 
   // ================= LOAD DATA ======================
   async function loadData() {
+    if (!shorturl || shorturl === "undefined") return;
     setLoading(true);
 
     try {
@@ -146,7 +147,7 @@ export default function SmartLink() {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [shorturl]);
 
   // ================= STATUS HELPER ======================
   const getStatus = () => {
