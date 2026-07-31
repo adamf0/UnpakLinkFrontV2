@@ -26,17 +26,14 @@ export default function App() {
         checkLoginIframe: false,
         pkceMethod: "S256",
       }}
-      onTokens={(tokens) => {
-        if (tokens?.token) {
-          localStorage.setItem("token", tokens.token);
-        }
-        if (tokens?.idToken) {
-          localStorage.setItem("idToken", tokens.idToken);
-        }
-        if (tokens?.refreshToken) {
-          localStorage.setItem("refresh", tokens.refreshToken);
-        }
-      }}
+      // onTokens={(tokens) => {
+      //   if (tokens?.token) {
+      //     localStorage.setItem("token", tokens.token);
+      //   }
+      //   if (tokens?.refreshToken) {
+      //     localStorage.setItem("refresh", tokens.refreshToken);
+      //   }
+      // }}
     >
       <SidebarProvider>
         <AuthProvider>

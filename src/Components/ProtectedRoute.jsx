@@ -1,24 +1,11 @@
 import { useKeycloak } from "@react-keycloak/web";
 import { useAuth } from "@/Providers/AuthProvider";
 import { Outlet } from "react-router-dom";
-import { useEffect } from "react";
 
 const BASEURL = import.meta.env.VITE_BASEURL;
 export default function ProtectedRoute() {
   const { keycloak, initialized } = useKeycloak();
   const { isSessionExpired } = useAuth();
-
-  useEffect(() => {
-    if (!initialized) {
-      const timer = setTimeout(() => {
-        if (window.location.hash.includes("state=") || window.location.search.includes("state=")) {
-          console.warn("Keycloak initialization stuck. Clearing expired oauth state...");
-          window.location.href = window.location.origin + window.location.pathname;
-        }
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [initialized]);
   
   const isRS512 = (token) => {
     try {
