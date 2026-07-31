@@ -8,6 +8,7 @@ export default function CallbackSSO() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    console.log(keycloak?.authenticated, keycloak?.token)
     if (!initialized) return;
 
     if (keycloak?.authenticated && keycloak?.token) {
