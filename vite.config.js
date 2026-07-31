@@ -8,7 +8,14 @@ export default defineConfig({
   // base: "/asj_rbac/",
   server: {
     host: true,
-    allowedHosts: ['*']
+    allowedHosts: ['*'],
+    proxy: {
+      '/realms': {
+        target: 'https://gerbang.unpak.ac.id',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
   plugins: [react(), tailwindcss(),],
   resolve: {
