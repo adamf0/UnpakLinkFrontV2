@@ -2143,7 +2143,7 @@ function DetailModal({ shortUrl, createdAt, creator, creatorName, start, end, on
               Pembuat Link
             </span>
             <span className="text-base font-extrabold text-cyan-700 truncate max-w-full">
-              {creatorName || (getNameInfo() ? getNameInfo() : creator) || creator || "Tidak diketahui"}
+              {creatorName || creator || "Tidak diketahui"}
             </span>
           </div>
         </div>
