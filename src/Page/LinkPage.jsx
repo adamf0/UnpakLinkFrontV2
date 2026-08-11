@@ -286,6 +286,7 @@ export default function LinkPage() {
             password={data.Password}
             createdAt={data.CreatedAt}
             creator={data.Creator}
+            creatorName={data.CreatorName || data.creator_name}
             renderAction={() => loadData()}
           />
         ))}
@@ -940,6 +941,7 @@ function LinkCard({
   state,
   createdAt,
   creator,
+  creatorName,
   renderAction = () => {},
 }) {
   const { getValidToken } = useAuth();
@@ -2009,6 +2011,7 @@ flex flex-col sm:flex-row gap-5 hover:shadow-lg hover:-translate-y-0.5 transitio
           shortUrl={shortUrl}
           createdAt={createdAt}
           creator={creator}
+          creatorName={creatorName}
           start={start}
           end={end}
           onClose={() => setShowDetail(false)}
@@ -2021,7 +2024,8 @@ flex flex-col sm:flex-row gap-5 hover:shadow-lg hover:-translate-y-0.5 transitio
   );
 }
 
-function DetailModal({ shortUrl, createdAt, creator, start, end, onClose, getValidToken, addToast, BASEURL }) {
+function DetailModal({ shortUrl, createdAt, creator, creatorName, start, end, onClose, getValidToken, addToast, BASEURL }) {
+  const { getNameInfo } = useAuth();
   const [clickCount, setClickCount] = useState(null);
   const [loadingClicks, setLoadingClicks] = useState(true);
 
@@ -2139,7 +2143,7 @@ function DetailModal({ shortUrl, createdAt, creator, start, end, onClose, getVal
               Pembuat Link
             </span>
             <span className="text-base font-extrabold text-cyan-700 truncate max-w-full">
-              {creator || "Tidak diketahui"}
+              {creatorName || (getNameInfo() ? getNameInfo() : creator) || creator || "Tidak diketahui"}
             </span>
           </div>
         </div>
