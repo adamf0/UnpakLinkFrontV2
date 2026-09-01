@@ -25,8 +25,7 @@ import {
   Share2,
 } from "lucide-react";
 
-const logo_unpak = "https://assets.unpak.ac.id/images/logo/logo-unpak.png";
-
+import logo_unpak from "@/assets/logo.png";
 import { QRCodeCanvas as QR } from "qrcode.react";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/Providers/ToastProvider";
@@ -1539,15 +1538,27 @@ function LinkCard({
     if (!qrRef.current) return;
 
     try {
-      const dataUrl = await toPng(qrRef.current, {
-        cacheBust: true,
-        backgroundColor: "#ffffff",
-      });
+      let dataUrl;
+      const canvasEl =
+        qrRef.current.tagName === "CANVAS"
+          ? qrRef.current
+          : qrRef.current.querySelector?.("canvas");
+
+      if (canvasEl && typeof canvasEl.toDataURL === "function") {
+        dataUrl = canvasEl.toDataURL("image/png");
+      } else {
+        dataUrl = await toPng(qrRef.current, {
+          cacheBust: true,
+          backgroundColor: "#ffffff",
+        });
+      }
 
       const link = document.createElement("a");
-      link.download = `QR.png`;
+      link.download = `QR-${shortUrl || "code"}.png`;
       link.href = dataUrl;
+      document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
     } catch (err) {
       console.error(err);
       addToast("error", "Gagal download QR");
